@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ContractData, contractSchema } from "@/lib/schema";
 import { Field } from "./Field";
 import { ContractPreview } from "./ContractPreview";
+import { LegalAudit } from "./LegalAudit"
+import { TransmissionMail } from "./TransmissionMail"
 
 export function ContractApp() {
   const [validatedData, setValidatedData] = useState<ContractData | null>(null);
@@ -603,9 +605,11 @@ export function ContractApp() {
             )}
           </form>
 
-          <div className={`${showPreviewMobile ? "block" : "hidden"} md:block`}>
-            <ContractPreview data={currentData} />
-          </div>
+          <div className={`${showPreviewMobile ? "block" : "hidden"} space-y-4 md:block`}>
+  <LegalAudit data={currentData} />
+  <TransmissionMail data={currentData} />
+  <ContractPreview data={currentData} />
+</div>
         </div>
       </div>
 
