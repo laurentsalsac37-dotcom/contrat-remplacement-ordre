@@ -9,6 +9,7 @@ import { ContractPreview } from "./ContractPreview";
 
 export function ContractApp() {
   const [validatedData, setValidatedData] = useState<ContractData | null>(null);
+  const [showPreviewMobile, setShowPreviewMobile] = useState(false);
 
   const {
     register,
@@ -55,29 +56,40 @@ export function ContractApp() {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100";
+    "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-950 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100 md:px-3 md:py-2 md:text-sm";
 
   return (
-    <main className="min-h-screen bg-slate-100 p-6">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wide text-red-700">
+    <main className="min-h-screen bg-slate-100 pb-28 md:p-6 md:pb-6">
+      <div className="mx-auto w-full max-w-7xl">
+        <header className="mb-4 rounded-none bg-white p-4 shadow-sm md:mb-8 md:rounded-2xl md:p-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-red-700 md:text-sm">
             Ordre national des infirmiers
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-950">
+
+          <h1 className="mt-2 text-2xl font-bold leading-tight text-slate-950 md:text-3xl">
             Générateur de contrat de remplacement infirmier
           </h1>
-          <p className="mt-3 max-w-4xl text-slate-700">
+
+          <p className="mt-3 text-sm leading-6 text-slate-700 md:max-w-4xl md:text-base">
             Complétez les informations des deux infirmiers, le motif, la durée,
             les honoraires, les modalités de facturation et les attestations
-            obligatoires. Le contrat final s’imprime en PDF au format A4.
+            obligatoires.
           </p>
+
+          <button
+            type="button"
+            onClick={() => setShowPreviewMobile((value) => !value)}
+            className="mt-4 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 md:hidden"
+          >
+            {showPreviewMobile ? "Masquer le contrat" : "Afficher le contrat"}
+          </button>
         </header>
 
-        <div className="print-wrapper grid gap-6 lg:grid-cols-[1fr_0.95fr]">
+        <div className="print-wrapper grid gap-4 md:gap-6 lg:grid-cols-[1fr_0.95fr]">
           <form
+            id="contract-form"
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6 rounded-2xl bg-white p-6 shadow-sm"
+            className="space-y-4 rounded-none bg-white p-4 shadow-sm md:space-y-6 md:rounded-2xl md:p-6"
           >
             <section className="space-y-4">
               <StepHeader number="1" title="Infirmier remplacé" />
@@ -107,11 +119,11 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Téléphone" error={errors.remplaceTelephone?.message}>
-                  <input className={inputClass} {...register("remplaceTelephone")} />
+                  <input inputMode="tel" className={inputClass} {...register("remplaceTelephone")} />
                 </Field>
 
                 <Field label="E-mail" error={errors.remplaceEmail?.message}>
-                  <input className={inputClass} {...register("remplaceEmail")} />
+                  <input type="email" className={inputClass} {...register("remplaceEmail")} />
                 </Field>
 
                 <Field label="CPAM de rattachement" error={errors.remplaceCpam?.message}>
@@ -125,7 +137,7 @@ export function ContractApp() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Code postal" error={errors.remplaceCodePostal?.message}>
-                  <input className={inputClass} {...register("remplaceCodePostal")} />
+                  <input inputMode="numeric" className={inputClass} {...register("remplaceCodePostal")} />
                 </Field>
 
                 <Field label="Ville" error={errors.remplaceVille?.message}>
@@ -134,7 +146,7 @@ export function ContractApp() {
               </div>
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="2" title="Infirmier remplaçant" />
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -162,17 +174,14 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Téléphone" error={errors.remplacantTelephone?.message}>
-                  <input className={inputClass} {...register("remplacantTelephone")} />
+                  <input inputMode="tel" className={inputClass} {...register("remplacantTelephone")} />
                 </Field>
 
                 <Field label="E-mail" error={errors.remplacantEmail?.message}>
-                  <input className={inputClass} {...register("remplacantEmail")} />
+                  <input type="email" className={inputClass} {...register("remplacantEmail")} />
                 </Field>
 
-                <Field
-                  label="Numéro d’autorisation de remplacement"
-                  error={errors.numeroAutorisation?.message}
-                >
+                <Field label="Numéro d’autorisation de remplacement" error={errors.numeroAutorisation?.message}>
                   <input className={inputClass} {...register("numeroAutorisation")} />
                 </Field>
 
@@ -180,17 +189,11 @@ export function ContractApp() {
                   <input type="date" className={inputClass} {...register("dateAutorisation")} />
                 </Field>
 
-                <Field
-                  label="Conseil ordinal ayant délivré l’autorisation"
-                  error={errors.conseilAutorisation?.message}
-                >
+                <Field label="Conseil ordinal ayant délivré l’autorisation" error={errors.conseilAutorisation?.message}>
                   <input className={inputClass} {...register("conseilAutorisation")} />
                 </Field>
 
-                <Field
-                  label="CPAM ayant autorisé l’exercice"
-                  error={errors.cpamAutorisation?.message}
-                >
+                <Field label="CPAM ayant autorisé l’exercice" error={errors.cpamAutorisation?.message}>
                   <input className={inputClass} {...register("cpamAutorisation")} />
                 </Field>
               </div>
@@ -201,7 +204,7 @@ export function ContractApp() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Code postal" error={errors.remplacantCodePostal?.message}>
-                  <input className={inputClass} {...register("remplacantCodePostal")} />
+                  <input inputMode="numeric" className={inputClass} {...register("remplacantCodePostal")} />
                 </Field>
 
                 <Field label="Ville" error={errors.remplacantVille?.message}>
@@ -210,7 +213,7 @@ export function ContractApp() {
               </div>
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="3" title="Motif et durée du remplacement" />
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -251,22 +254,15 @@ export function ContractApp() {
               </div>
 
               <Field label="Jours précis, si applicable" error={errors.joursPrecis?.message}>
-                <textarea className={inputClass} rows={3} {...register("joursPrecis")} />
+                <textarea className={inputClass} rows={4} {...register("joursPrecis")} />
               </Field>
 
-              <Field
-                label="Précisions relatives au planning annexé"
-                error={errors.planningAnnexePrecision?.message}
-              >
-                <textarea
-                  className={inputClass}
-                  rows={3}
-                  {...register("planningAnnexePrecision")}
-                />
+              <Field label="Précisions relatives au planning annexé" error={errors.planningAnnexePrecision?.message}>
+                <textarea className={inputClass} rows={4} {...register("planningAnnexePrecision")} />
               </Field>
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="4" title="Lieu, matériel et organisation" />
 
               <Field label="Adresse du lieu d’exercice" error={errors.adresseExercice?.message}>
@@ -274,11 +270,7 @@ export function ContractApp() {
               </Field>
 
               <Field label="Matériel mis à disposition" error={errors.materielMisADisposition?.message}>
-                <textarea
-                  className={inputClass}
-                  rows={3}
-                  {...register("materielMisADisposition")}
-                />
+                <textarea className={inputClass} rows={4} {...register("materielMisADisposition")} />
               </Field>
 
               <Field label="Logiciel professionnel utilisé" error={errors.logicielProfessionnel?.message}>
@@ -286,21 +278,17 @@ export function ContractApp() {
               </Field>
 
               <Field label="Secrétariat ou organisation administrative" error={errors.secretariat?.message}>
-                <textarea className={inputClass} rows={3} {...register("secretariat")} />
+                <textarea className={inputClass} rows={4} {...register("secretariat")} />
               </Field>
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="5" title="Facturation et honoraires" />
 
               <Field label="Mode de facturation" error={errors.modeFacturation?.message}>
                 <select className={inputClass} {...register("modeFacturation")}>
-                  <option value="cps_remplacant">
-                    CPS ou e-CPS personnelle du remplaçant
-                  </option>
-                  <option value="feuilles_soins">
-                    Feuilles de soins papier avec identification du remplaçant
-                  </option>
+                  <option value="cps_remplacant">CPS ou e-CPS personnelle du remplaçant</option>
+                  <option value="feuilles_soins">Feuilles de soins papier avec identification du remplaçant</option>
                 </select>
               </Field>
 
@@ -310,26 +298,19 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Pourcentage reversé au remplaçant" error={errors.pourcentageReverse?.message}>
-                  <input type="number" className={inputClass} {...register("pourcentageReverse")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("pourcentageReverse")} />
                 </Field>
 
                 <Field label="Délai de reversement en mois" error={errors.delaiReversement?.message}>
-                  <input type="number" className={inputClass} {...register("delaiReversement")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("delaiReversement")} />
                 </Field>
 
                 <Field label="Pourcentage tiers payant reversé" error={errors.pourcentageTiersPayant?.message}>
-                  <input type="number" className={inputClass} {...register("pourcentageTiersPayant")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("pourcentageTiersPayant")} />
                 </Field>
 
-                <Field
-                  label="Délai tiers payant en mois"
-                  error={errors.delaiReversementTiersPayant?.message}
-                >
-                  <input
-                    type="number"
-                    className={inputClass}
-                    {...register("delaiReversementTiersPayant")}
-                  />
+                <Field label="Délai tiers payant en mois" error={errors.delaiReversementTiersPayant?.message}>
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("delaiReversementTiersPayant")} />
                 </Field>
 
                 <Field label="Modalité de paiement" error={errors.modalitePaiement?.message}>
@@ -342,32 +323,26 @@ export function ContractApp() {
               </div>
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="6" title="Résiliation et non-concurrence" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Préavis accord commun en jours" error={errors.preavisCommunAccord?.message}>
-                  <input type="number" className={inputClass} {...register("preavisCommunAccord")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("preavisCommunAccord")} />
                 </Field>
 
                 <Field label="Préavis en cas de manquement en jours" error={errors.preavisManquement?.message}>
-                  <input type="number" className={inputClass} {...register("preavisManquement")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("preavisManquement")} />
                 </Field>
 
-                <Field
-                  label="Remplacement supérieur à 3 mois ?"
-                  error={errors.remplacementSuperieurTroisMois?.message}
-                >
+                <Field label="Remplacement supérieur à 3 mois ?" error={errors.remplacementSuperieurTroisMois?.message}>
                   <select className={inputClass} {...register("remplacementSuperieurTroisMois")}>
                     <option value="non">Non</option>
                     <option value="oui">Oui</option>
                   </select>
                 </Field>
 
-                <Field
-                  label="Type de périmètre de non-concurrence"
-                  error={errors.clauseNonConcurrence?.message}
-                >
+                <Field label="Type de périmètre de non-concurrence" error={errors.clauseNonConcurrence?.message}>
                   <select className={inputClass} {...register("clauseNonConcurrence")}>
                     <option value="">Non applicable</option>
                     <option value="rayon">Rayon kilométrique</option>
@@ -376,7 +351,7 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Rayon en kilomètres" error={errors.rayonKm?.message}>
-                  <input className={inputClass} {...register("rayonKm")} />
+                  <input inputMode="numeric" className={inputClass} {...register("rayonKm")} />
                 </Field>
 
                 <Field label="Durée de la clause" error={errors.dureeNonConcurrence?.message}>
@@ -385,71 +360,24 @@ export function ContractApp() {
               </div>
 
               <Field label="Communes concernées" error={errors.communesConcernees?.message}>
-                <textarea className={inputClass} rows={3} {...register("communesConcernees")} />
+                <textarea className={inputClass} rows={4} {...register("communesConcernees")} />
               </Field>
             </section>
 
-            <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-5">
+            <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-4 md:p-5">
               <StepHeader number="7" title="Déclarations obligatoires" />
 
-              <CheckboxLine
-                register={register}
-                name="remplaceSuspendActivite"
-                error={Boolean(errors.remplaceSuspendActivite)}
-                label="L’infirmier remplacé confirme suspendre son activité pendant les périodes de remplacement."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="remplacantUtiliseSaCps"
-                error={Boolean(errors.remplacantUtiliseSaCps)}
-                label="L’infirmier remplaçant confirme utiliser sa propre CPS ou e-CPS."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="jamaisCpsDuRemplace"
-                error={Boolean(errors.jamaisCpsDuRemplace)}
-                label="Les parties confirment que la CPS personnelle du remplacé ne sera jamais utilisée."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="rcpValide"
-                error={Boolean(errors.rcpValide)}
-                label="Le remplaçant atteste disposer d’une assurance responsabilité civile professionnelle valide."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="autorisationValide"
-                error={Boolean(errors.autorisationValide)}
-                label="Le remplaçant atteste disposer d’une autorisation de remplacement valide."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="pasPlusDeuxRemplacements"
-                error={Boolean(errors.pasPlusDeuxRemplacements)}
-                label="Le remplaçant atteste ne pas assurer plus de deux remplacements simultanément."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="transmissionOrdre"
-                error={Boolean(errors.transmissionOrdre)}
-                label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent."
-              />
-
-              <CheckboxLine
-                register={register}
-                name="aucuneContreLettre"
-                error={Boolean(errors.aucuneContreLettre)}
-                label="Les parties déclarent qu’aucune contre-lettre ne modifie le présent contrat."
-              />
+              <CheckboxLine register={register} name="remplaceSuspendActivite" error={Boolean(errors.remplaceSuspendActivite)} label="L’infirmier remplacé confirme suspendre son activité pendant les périodes de remplacement." />
+              <CheckboxLine register={register} name="remplacantUtiliseSaCps" error={Boolean(errors.remplacantUtiliseSaCps)} label="L’infirmier remplaçant confirme utiliser sa propre CPS ou e-CPS." />
+              <CheckboxLine register={register} name="jamaisCpsDuRemplace" error={Boolean(errors.jamaisCpsDuRemplace)} label="Les parties confirment que la CPS personnelle du remplacé ne sera jamais utilisée." />
+              <CheckboxLine register={register} name="rcpValide" error={Boolean(errors.rcpValide)} label="Le remplaçant atteste disposer d’une assurance responsabilité civile professionnelle valide." />
+              <CheckboxLine register={register} name="autorisationValide" error={Boolean(errors.autorisationValide)} label="Le remplaçant atteste disposer d’une autorisation de remplacement valide." />
+              <CheckboxLine register={register} name="pasPlusDeuxRemplacements" error={Boolean(errors.pasPlusDeuxRemplacements)} label="Le remplaçant atteste ne pas assurer plus de deux remplacements simultanément." />
+              <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent." />
+              <CheckboxLine register={register} name="aucuneContreLettre" error={Boolean(errors.aucuneContreLettre)} label="Les parties déclarent qu’aucune contre-lettre ne modifie le présent contrat." />
             </section>
 
-            <section className="space-y-4 border-t border-slate-200 pt-6">
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="8" title="Signature" />
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -462,14 +390,14 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Nombre d’exemplaires" error={errors.nombreExemplaires?.message}>
-                  <input type="number" className={inputClass} {...register("nombreExemplaires")} />
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("nombreExemplaires")} />
                 </Field>
               </div>
             </section>
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-red-700 px-4 py-3 font-semibold text-white hover:bg-red-800"
+              className="hidden w-full rounded-xl bg-red-700 px-4 py-3 font-semibold text-white hover:bg-red-800 md:block"
             >
               Valider le contrat et imprimer en PDF
             </button>
@@ -482,8 +410,20 @@ export function ContractApp() {
             )}
           </form>
 
-          <ContractPreview data={currentData} />
+          <div className={`${showPreviewMobile ? "block" : "hidden"} md:block`}>
+            <ContractPreview data={currentData} />
+          </div>
         </div>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white p-3 shadow-lg md:hidden no-print">
+        <button
+          type="submit"
+          form="contract-form"
+          className="w-full rounded-xl bg-red-700 px-4 py-4 text-base font-semibold text-white"
+        >
+          Valider et générer le PDF
+        </button>
       </div>
     </main>
   );
@@ -492,10 +432,10 @@ export function ContractApp() {
 function StepHeader({ number, title }: { number: string; title: string }) {
   return (
     <div>
-      <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 md:text-sm">
         Étape {number}
       </p>
-      <h2 className="text-xl font-bold text-slate-950">{title}</h2>
+      <h2 className="text-lg font-bold text-slate-950 md:text-xl">{title}</h2>
     </div>
   );
 }
@@ -513,8 +453,8 @@ function CheckboxLine({
 }) {
   return (
     <div>
-      <label className="flex gap-3 text-sm text-slate-900">
-        <input className="mt-1 h-4 w-4" type="checkbox" {...register(name)} />
+      <label className="flex gap-3 text-sm leading-6 text-slate-900">
+        <input className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4" type="checkbox" {...register(name)} />
         <span>{label}</span>
       </label>
       {error && (
