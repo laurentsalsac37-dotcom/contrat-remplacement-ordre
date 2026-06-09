@@ -1,0 +1,52 @@
+import Image from "next/image";
+import { ContractData } from "@/lib/schema";
+import { buildContractText } from "@/lib/contract";
+
+type Props = {
+  data: Partial<ContractData>;
+};
+
+export function ContractPreview({ data }: Props) {
+  return (
+    <div className="contract-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-6 border-b border-slate-200 pb-4 no-print">
+        <p className="text-sm font-semibold uppercase tracking-wide text-red-700">
+          Prévisualisation
+        </p>
+        <h2 className="mt-1 text-2xl font-bold text-slate-950">
+          Contrat rempli automatiquement
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          La version PDF imprime le contrat en pleine page A4.
+        </p>
+      </div>
+
+      <article className="contract-document mx-auto bg-white text-slate-950">
+        <div className="mb-8 flex items-start justify-between gap-6 border-b border-slate-200 pb-6">
+          <div>
+            <h1 className="text-xl font-bold uppercase leading-7">
+              Contrat de remplacement entre un infirmier libéral et un infirmier
+              titulaire d’une autorisation de remplacement
+            </h1>
+            <p className="mt-3 text-sm text-slate-600">
+              Modèle à compléter avant signature par les deux parties.
+            </p>
+          </div>
+
+          <Image
+            src="/logo-ordre.png"
+            alt="Logo de l’Ordre national des infirmiers"
+            width={150}
+            height={150}
+            className="h-auto w-[150px] object-contain"
+            priority
+          />
+        </div>
+
+        <div className="contract-text whitespace-pre-wrap font-serif text-[11.5pt] leading-7">
+          {buildContractText(data)}
+        </div>
+      </article>
+    </div>
+  );
+}
