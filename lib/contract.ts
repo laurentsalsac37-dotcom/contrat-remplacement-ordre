@@ -343,10 +343,9 @@ Fait à ${value(data.faitA)}, le ${value(data.faitLe)}.
 
 Nombre d’exemplaires : ${value(data.nombreExemplaires)}.
 
+Les signatures des parties figurent ci-après.
+
 Signature de l’infirmier remplacé :
-
-
-
 
 Signature de l’infirmier remplaçant :
 `;

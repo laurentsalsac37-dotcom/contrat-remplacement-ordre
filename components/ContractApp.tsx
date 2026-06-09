@@ -6,12 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ContractData, contractSchema } from "@/lib/schema";
 import { Field } from "./Field";
 import { ContractPreview } from "./ContractPreview";
-import { LegalAudit } from "./LegalAudit"
-import { TransmissionMail } from "./TransmissionMail"
+import { LegalAudit } from "./LegalAudit";
+import { TransmissionMail } from "./TransmissionMail";
+import { SignaturePad } from "./SignaturePad";
 
 export function ContractApp() {
   const [validatedData, setValidatedData] = useState<ContractData | null>(null);
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
+  const [signatureRemplace, setSignatureRemplace] = useState("");
+  const [signatureRemplacant, setSignatureRemplacant] = useState("");
 
   const {
     register,
@@ -89,6 +92,7 @@ export function ContractApp() {
 
   function onSubmit(data: ContractData) {
     setValidatedData(data);
+
     setTimeout(() => {
       window.print();
     }, 300);
@@ -158,11 +162,19 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Téléphone" error={errors.remplaceTelephone?.message}>
-                  <input inputMode="tel" className={inputClass} {...register("remplaceTelephone")} />
+                  <input
+                    inputMode="tel"
+                    className={inputClass}
+                    {...register("remplaceTelephone")}
+                  />
                 </Field>
 
                 <Field label="E-mail" error={errors.remplaceEmail?.message}>
-                  <input type="email" className={inputClass} {...register("remplaceEmail")} />
+                  <input
+                    type="email"
+                    className={inputClass}
+                    {...register("remplaceEmail")}
+                  />
                 </Field>
 
                 <Field label="CPAM de rattachement" error={errors.remplaceCpam?.message}>
@@ -176,7 +188,11 @@ export function ContractApp() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Code postal" error={errors.remplaceCodePostal?.message}>
-                  <input inputMode="numeric" className={inputClass} {...register("remplaceCodePostal")} />
+                  <input
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("remplaceCodePostal")}
+                  />
                 </Field>
 
                 <Field label="Ville" error={errors.remplaceVille?.message}>
@@ -220,11 +236,19 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Téléphone" error={errors.remplacantTelephone?.message}>
-                  <input inputMode="tel" className={inputClass} {...register("remplacantTelephone")} />
+                  <input
+                    inputMode="tel"
+                    className={inputClass}
+                    {...register("remplacantTelephone")}
+                  />
                 </Field>
 
                 <Field label="E-mail" error={errors.remplacantEmail?.message}>
-                  <input type="email" className={inputClass} {...register("remplacantEmail")} />
+                  <input
+                    type="email"
+                    className={inputClass}
+                    {...register("remplacantEmail")}
+                  />
                 </Field>
 
                 <Field label="Numéro d’autorisation de remplacement" error={errors.numeroAutorisation?.message}>
@@ -232,7 +256,11 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Date d’autorisation" error={errors.dateAutorisation?.message}>
-                  <input type="date" className={inputClass} {...register("dateAutorisation")} />
+                  <input
+                    type="date"
+                    className={inputClass}
+                    {...register("dateAutorisation")}
+                  />
                 </Field>
 
                 <Field label="Conseil ordinal ayant délivré l’autorisation" error={errors.conseilAutorisation?.message}>
@@ -244,7 +272,10 @@ export function ContractApp() {
                 </Field>
               </div>
 
-              <Field label="Justificatif des 18 mois ou 2 400 heures, si remplaçant non installé" error={errors.justificatif2400h?.message}>
+              <Field
+                label="Justificatif des 18 mois ou 2 400 heures, si remplaçant non installé"
+                error={errors.justificatif2400h?.message}
+              >
                 <input className={inputClass} {...register("justificatif2400h")} />
               </Field>
 
@@ -254,7 +285,11 @@ export function ContractApp() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Code postal" error={errors.remplacantCodePostal?.message}>
-                  <input inputMode="numeric" className={inputClass} {...register("remplacantCodePostal")} />
+                  <input
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("remplacantCodePostal")}
+                  />
                 </Field>
 
                 <Field label="Ville" error={errors.remplacantVille?.message}>
@@ -321,8 +356,15 @@ export function ContractApp() {
                 <textarea className={inputClass} rows={4} {...register("joursPrecis")} />
               </Field>
 
-              <Field label="Précisions relatives au planning annexé" error={errors.planningAnnexePrecision?.message}>
-                <textarea className={inputClass} rows={4} {...register("planningAnnexePrecision")} />
+              <Field
+                label="Précisions relatives au planning annexé"
+                error={errors.planningAnnexePrecision?.message}
+              >
+                <textarea
+                  className={inputClass}
+                  rows={4}
+                  {...register("planningAnnexePrecision")}
+                />
               </Field>
             </section>
 
@@ -442,19 +484,39 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Pourcentage reversé au remplaçant" error={errors.pourcentageReverse?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("pourcentageReverse")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("pourcentageReverse")}
+                  />
                 </Field>
 
                 <Field label="Délai de reversement en mois" error={errors.delaiReversement?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("delaiReversement")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("delaiReversement")}
+                  />
                 </Field>
 
                 <Field label="Pourcentage tiers payant reversé" error={errors.pourcentageTiersPayant?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("pourcentageTiersPayant")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("pourcentageTiersPayant")}
+                  />
                 </Field>
 
                 <Field label="Délai tiers payant en mois" error={errors.delaiReversementTiersPayant?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("delaiReversementTiersPayant")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("delaiReversementTiersPayant")}
+                  />
                 </Field>
 
                 <Field label="Modalité de paiement" error={errors.modalitePaiement?.message}>
@@ -473,7 +535,12 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Taux de redevance en %" error={errors.tauxRedevance?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("tauxRedevance")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("tauxRedevance")}
+                  />
                 </Field>
 
                 <Field label="Frais kilométriques exclus de l’assiette ?" error={errors.fraisKilometriquesExclus?.message}>
@@ -505,11 +572,21 @@ export function ContractApp() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Préavis accord commun en jours" error={errors.preavisCommunAccord?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("preavisCommunAccord")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("preavisCommunAccord")}
+                  />
                 </Field>
 
                 <Field label="Préavis en cas de manquement en jours" error={errors.preavisManquement?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("preavisManquement")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("preavisManquement")}
+                  />
                 </Field>
 
                 <Field label="Remplacement supérieur à 3 mois ?" error={errors.remplacementSuperieurTroisMois?.message}>
@@ -529,7 +606,11 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Rayon en kilomètres" error={errors.rayonKm?.message}>
-                  <input inputMode="numeric" className={inputClass} {...register("rayonKm")} />
+                  <input
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("rayonKm")}
+                  />
                 </Field>
 
                 <Field label="Durée de la clause" error={errors.dureeNonConcurrence?.message}>
@@ -585,8 +666,27 @@ export function ContractApp() {
                 </Field>
 
                 <Field label="Nombre d’exemplaires" error={errors.nombreExemplaires?.message}>
-                  <input type="number" inputMode="numeric" className={inputClass} {...register("nombreExemplaires")} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={inputClass}
+                    {...register("nombreExemplaires")}
+                  />
                 </Field>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <SignaturePad
+                  label="Signature de l’infirmier remplacé"
+                  value={signatureRemplace}
+                  onChange={setSignatureRemplace}
+                />
+
+                <SignaturePad
+                  label="Signature de l’infirmier remplaçant"
+                  value={signatureRemplacant}
+                  onChange={setSignatureRemplacant}
+                />
               </div>
             </section>
 
@@ -606,10 +706,14 @@ export function ContractApp() {
           </form>
 
           <div className={`${showPreviewMobile ? "block" : "hidden"} space-y-4 md:block`}>
-  <LegalAudit data={currentData} />
-  <TransmissionMail data={currentData} />
-  <ContractPreview data={currentData} />
-</div>
+            <LegalAudit data={currentData} />
+            <TransmissionMail data={currentData} />
+            <ContractPreview
+              data={currentData}
+              signatureRemplace={signatureRemplace}
+              signatureRemplacant={signatureRemplacant}
+            />
+          </div>
         </div>
       </div>
 
@@ -651,7 +755,11 @@ function CheckboxLine({
   return (
     <div>
       <label className="flex gap-3 text-sm leading-6 text-slate-900">
-        <input className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4" type="checkbox" {...register(name)} />
+        <input
+          className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4"
+          type="checkbox"
+          {...register(name)}
+        />
         <span>{label}</span>
       </label>
       {error && (
@@ -674,7 +782,11 @@ function CheckboxSimple({
 }) {
   return (
     <label className="mb-2 flex gap-3 text-sm leading-6 text-slate-900">
-      <input className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4" type="checkbox" {...register(name)} />
+      <input
+        className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4"
+        type="checkbox"
+        {...register(name)}
+      />
       <span>{label}</span>
     </label>
   );

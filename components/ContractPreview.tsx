@@ -4,9 +4,15 @@ import { buildContractText } from "@/lib/contract";
 
 type Props = {
   data: Partial<ContractData>;
+  signatureRemplace?: string;
+  signatureRemplacant?: string;
 };
 
-export function ContractPreview({ data }: Props) {
+export function ContractPreview({
+  data,
+  signatureRemplace,
+  signatureRemplacant,
+}: Props) {
   return (
     <div className="contract-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4 no-print">
@@ -26,7 +32,7 @@ export function ContractPreview({ data }: Props) {
           <div>
             <h1 className="text-xl font-bold uppercase leading-7">
               Contrat de remplacement entre un infirmier libéral et un infirmier
-              titulaire d’une autorisation de remplacement
+              remplaçant
             </h1>
             <p className="mt-3 text-sm text-slate-600">
               Modèle à compléter avant signature par les deux parties.
@@ -45,6 +51,44 @@ export function ContractPreview({ data }: Props) {
 
         <div className="contract-text whitespace-pre-wrap font-serif text-[11.5pt] leading-7">
           {buildContractText(data)}
+        </div>
+
+        <div className="mt-10 grid gap-8 md:grid-cols-2">
+          <div className="min-h-40 border-t border-slate-300 pt-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">
+              Signature de l’infirmier remplacé
+            </p>
+
+            {signatureRemplace ? (
+              <img
+                src={signatureRemplace}
+                alt="Signature de l’infirmier remplacé"
+                className="h-28 max-w-full object-contain"
+              />
+            ) : (
+              <div className="flex h-28 items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs text-slate-500">
+                Signature non renseignée
+              </div>
+            )}
+          </div>
+
+          <div className="min-h-40 border-t border-slate-300 pt-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">
+              Signature de l’infirmier remplaçant
+            </p>
+
+            {signatureRemplacant ? (
+              <img
+                src={signatureRemplacant}
+                alt="Signature de l’infirmier remplaçant"
+                className="h-28 max-w-full object-contain"
+              />
+            ) : (
+              <div className="flex h-28 items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs text-slate-500">
+                Signature non renseignée
+              </div>
+            )}
+          </div>
         </div>
       </article>
     </div>
