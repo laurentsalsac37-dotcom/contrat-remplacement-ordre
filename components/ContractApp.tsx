@@ -23,26 +23,63 @@ export function ContractApp() {
       remplaceCpam: "",
       remplacantCivilite: "Mme",
       cpamAutorisation: "",
+      statutRemplacant: "non_installe",
+      numeroAutorisation: "",
+      dateAutorisation: "",
+      conseilAutorisation: "",
+      justificatif2400h: "",
       motif: "conge_annuel",
       typeRemplacement: "continu",
+      remplacementPlus24h: "oui",
+      remplacementRepete: "non",
+      exerciceEnGroupe: "non",
+      typeGroupe: "",
+      clauseAgrement: "",
+      agrementObtenu: "",
+      confreresInformes: "",
+      lieuRemplacement: "cabinet_remplace",
+      etatLieuxDebut: "non",
+      etatLieuxFin: "non",
+      inventaireMateriel: "non",
       modeFacturation: "cps_remplacant",
       pourcentageReverse: 90,
       delaiReversement: 1,
       pourcentageTiersPayant: 90,
       delaiReversementTiersPayant: 1,
       modalitePaiement: "virement",
+      redevancePrevue: "oui",
+      tauxRedevance: 10,
+      assietteSoins: true,
+      assietteMajorationsNuit: true,
+      assietteDimancheFeries: true,
+      assietteFraisKilometriques: false,
+      fraisKilometriquesExclus: "oui",
       preavisCommunAccord: 7,
       preavisManquement: 7,
       remplacementSuperieurTroisMois: "non",
+      clauseNonConcurrence: "",
+      rayonKm: "",
+      communesConcernees: "",
+      dureeNonConcurrence: "",
+      accordOrdreNonConcurrence: "",
       nombreExemplaires: 3,
       remplaceSuspendActivite: false,
       remplacantUtiliseSaCps: false,
       jamaisCpsDuRemplace: false,
+      remplacantIdentifiePersonnellement: false,
       rcpValide: false,
       autorisationValide: false,
       pasPlusDeuxRemplacements: false,
       transmissionOrdre: false,
       aucuneContreLettre: false,
+      absenceInterdictionRemplace: false,
+      absenceInterdictionRemplacant: false,
+      absenceLiquidationJudiciaire: false,
+      informationCpam: false,
+      justificatifsRemuneration: false,
+      conventionNationaleInformee: false,
+      restitutionLocauxMateriel: false,
+      abandonActiviteFinMission: false,
     },
   });
 
@@ -149,6 +186,13 @@ export function ContractApp() {
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="2" title="Infirmier remplaçant" />
 
+              <Field label="Statut du remplaçant" error={errors.statutRemplacant?.message}>
+                <select className={inputClass} {...register("statutRemplacant")}>
+                  <option value="non_installe">Sans résidence professionnelle</option>
+                  <option value="installe">Infirmier libéral installé</option>
+                </select>
+              </Field>
+
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Civilité" error={errors.remplacantCivilite?.message}>
                   <select className={inputClass} {...register("remplacantCivilite")}>
@@ -193,10 +237,14 @@ export function ContractApp() {
                   <input className={inputClass} {...register("conseilAutorisation")} />
                 </Field>
 
-                <Field label="CPAM ayant autorisé l’exercice" error={errors.cpamAutorisation?.message}>
+                <Field label="CPAM concernée" error={errors.cpamAutorisation?.message}>
                   <input className={inputClass} {...register("cpamAutorisation")} />
                 </Field>
               </div>
+
+              <Field label="Justificatif des 18 mois ou 2 400 heures, si remplaçant non installé" error={errors.justificatif2400h?.message}>
+                <input className={inputClass} {...register("justificatif2400h")} />
+              </Field>
 
               <Field label="Adresse personnelle" error={errors.remplacantAdresse?.message}>
                 <input className={inputClass} {...register("remplacantAdresse")} />
@@ -214,7 +262,7 @@ export function ContractApp() {
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="3" title="Motif et durée du remplacement" />
+              <StepHeader number="3" title="Motif, durée et contrat écrit" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Motif" error={errors.motif?.message}>
@@ -251,6 +299,20 @@ export function ContractApp() {
                     <option value="planning_annexe">Planning annexé</option>
                   </select>
                 </Field>
+
+                <Field label="Remplacement supérieur à 24 h ?" error={errors.remplacementPlus24h?.message}>
+                  <select className={inputClass} {...register("remplacementPlus24h")}>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
+
+                <Field label="Remplacement répété ?" error={errors.remplacementRepete?.message}>
+                  <select className={inputClass} {...register("remplacementRepete")}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                  </select>
+                </Field>
               </div>
 
               <Field label="Jours précis, si applicable" error={errors.joursPrecis?.message}>
@@ -263,7 +325,60 @@ export function ContractApp() {
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="4" title="Lieu, matériel et organisation" />
+              <StepHeader number="4" title="Exercice en groupe, lieu et matériel" />
+
+              <Field label="Le remplacé exerce-t-il en groupe ?" error={errors.exerciceEnGroupe?.message}>
+                <select className={inputClass} {...register("exerciceEnGroupe")}>
+                  <option value="non">Non</option>
+                  <option value="oui">Oui</option>
+                </select>
+              </Field>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field label="Type de groupe" error={errors.typeGroupe?.message}>
+                  <select className={inputClass} {...register("typeGroupe")}>
+                    <option value="">Non concerné</option>
+                    <option value="scp">SCP</option>
+                    <option value="sel">SEL</option>
+                    <option value="association">Association</option>
+                    <option value="cabinet_groupe">Cabinet de groupe</option>
+                    <option value="contrat_exercice_commun">Contrat d’exercice en commun</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </Field>
+
+                <Field label="Clause d’agrément ?" error={errors.clauseAgrement?.message}>
+                  <select className={inputClass} {...register("clauseAgrement")}>
+                    <option value="">Non concerné</option>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                    <option value="ne_sait_pas">Ne sait pas</option>
+                  </select>
+                </Field>
+
+                <Field label="Agrément obtenu ?" error={errors.agrementObtenu?.message}>
+                  <select className={inputClass} {...register("agrementObtenu")}>
+                    <option value="">Non concerné</option>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
+
+                <Field label="Confrères informés ?" error={errors.confreresInformes?.message}>
+                  <select className={inputClass} {...register("confreresInformes")}>
+                    <option value="">Non concerné</option>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
+
+                <Field label="Lieu de remplacement" error={errors.lieuRemplacement?.message}>
+                  <select className={inputClass} {...register("lieuRemplacement")}>
+                    <option value="cabinet_remplace">Cabinet du remplacé</option>
+                    <option value="cabinet_remplacant">Cabinet du remplaçant avec accord</option>
+                  </select>
+                </Field>
+              </div>
 
               <Field label="Adresse du lieu d’exercice" error={errors.adresseExercice?.message}>
                 <input className={inputClass} {...register("adresseExercice")} />
@@ -283,7 +398,34 @@ export function ContractApp() {
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="5" title="Facturation et honoraires" />
+              <StepHeader number="5" title="État des lieux et restitution" />
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <Field label="État des lieux au début ?" error={errors.etatLieuxDebut?.message}>
+                  <select className={inputClass} {...register("etatLieuxDebut")}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                  </select>
+                </Field>
+
+                <Field label="État des lieux à la fin ?" error={errors.etatLieuxFin?.message}>
+                  <select className={inputClass} {...register("etatLieuxFin")}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                  </select>
+                </Field>
+
+                <Field label="Inventaire annexé ?" error={errors.inventaireMateriel?.message}>
+                  <select className={inputClass} {...register("inventaireMateriel")}>
+                    <option value="non">Non</option>
+                    <option value="oui">Oui</option>
+                  </select>
+                </Field>
+              </div>
+            </section>
+
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
+              <StepHeader number="6" title="Facturation, honoraires et redevance" />
 
               <Field label="Mode de facturation" error={errors.modeFacturation?.message}>
                 <select className={inputClass} {...register("modeFacturation")}>
@@ -320,11 +462,44 @@ export function ContractApp() {
                     <option value="autre">Autre</option>
                   </select>
                 </Field>
+
+                <Field label="Redevance prévue ?" error={errors.redevancePrevue?.message}>
+                  <select className={inputClass} {...register("redevancePrevue")}>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
+
+                <Field label="Taux de redevance en %" error={errors.tauxRedevance?.message}>
+                  <input type="number" inputMode="numeric" className={inputClass} {...register("tauxRedevance")} />
+                </Field>
+
+                <Field label="Frais kilométriques exclus de l’assiette ?" error={errors.fraisKilometriquesExclus?.message}>
+                  <select className={inputClass} {...register("fraisKilometriquesExclus")}>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="mb-3 text-sm font-semibold text-slate-900">
+                  Éléments inclus dans l’assiette de la redevance
+                </p>
+
+                <CheckboxSimple register={register} name="assietteSoins" label="Soins" />
+                <CheckboxSimple register={register} name="assietteMajorationsNuit" label="Majorations de nuit" />
+                <CheckboxSimple register={register} name="assietteDimancheFeries" label="Majorations dimanche et jours fériés" />
+                <CheckboxSimple register={register} name="assietteFraisKilometriques" label="Frais kilométriques" />
+
+                <Field label="Autres éléments" error={errors.assietteAutres?.message}>
+                  <input className={inputClass} {...register("assietteAutres")} />
+                </Field>
               </div>
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="6" title="Résiliation et non-concurrence" />
+              <StepHeader number="7" title="Résiliation et non-concurrence" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Préavis accord commun en jours" error={errors.preavisCommunAccord?.message}>
@@ -342,11 +517,12 @@ export function ContractApp() {
                   </select>
                 </Field>
 
-                <Field label="Type de périmètre de non-concurrence" error={errors.clauseNonConcurrence?.message}>
+                <Field label="Type de périmètre" error={errors.clauseNonConcurrence?.message}>
                   <select className={inputClass} {...register("clauseNonConcurrence")}>
                     <option value="">Non applicable</option>
                     <option value="rayon">Rayon kilométrique</option>
                     <option value="communes">Communes listées</option>
+                    <option value="loyaute">Clause de loyauté et absence de concurrence déloyale</option>
                   </select>
                 </Field>
 
@@ -357,6 +533,14 @@ export function ContractApp() {
                 <Field label="Durée de la clause" error={errors.dureeNonConcurrence?.message}>
                   <input className={inputClass} {...register("dureeNonConcurrence")} />
                 </Field>
+
+                <Field label="Accord notifié à l’Ordre ?" error={errors.accordOrdreNonConcurrence?.message}>
+                  <select className={inputClass} {...register("accordOrdreNonConcurrence")}>
+                    <option value="">Non applicable</option>
+                    <option value="oui">Oui</option>
+                    <option value="non">Non</option>
+                  </select>
+                </Field>
               </div>
 
               <Field label="Communes concernées" error={errors.communesConcernees?.message}>
@@ -365,20 +549,29 @@ export function ContractApp() {
             </section>
 
             <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-4 md:p-5">
-              <StepHeader number="7" title="Déclarations obligatoires" />
+              <StepHeader number="8" title="Déclarations obligatoires" />
 
               <CheckboxLine register={register} name="remplaceSuspendActivite" error={Boolean(errors.remplaceSuspendActivite)} label="L’infirmier remplacé confirme suspendre son activité pendant les périodes de remplacement." />
-              <CheckboxLine register={register} name="remplacantUtiliseSaCps" error={Boolean(errors.remplacantUtiliseSaCps)} label="L’infirmier remplaçant confirme utiliser sa propre CPS ou e-CPS." />
-              <CheckboxLine register={register} name="jamaisCpsDuRemplace" error={Boolean(errors.jamaisCpsDuRemplace)} label="Les parties confirment que la CPS personnelle du remplacé ne sera jamais utilisée." />
+              <CheckboxLine register={register} name="absenceInterdictionRemplace" error={Boolean(errors.absenceInterdictionRemplace)} label="L’infirmier remplacé atteste ne pas faire l’objet d’une interdiction d’exercice." />
+              <CheckboxLine register={register} name="absenceInterdictionRemplacant" error={Boolean(errors.absenceInterdictionRemplacant)} label="L’infirmier remplaçant atteste ne pas faire l’objet d’une interdiction d’exercice." />
+              <CheckboxLine register={register} name="absenceLiquidationJudiciaire" error={Boolean(errors.absenceLiquidationJudiciaire)} label="Les parties attestent ne pas faire l’objet d’une liquidation judiciaire incompatible avec l’exercice ou le remplacement." />
+              <CheckboxLine register={register} name="remplacantUtiliseSaCps" error={Boolean(errors.remplacantUtiliseSaCps)} label="L’infirmier remplaçant confirme utiliser sa propre CPS ou e-CPS lorsque ce mode est retenu." />
+              <CheckboxLine register={register} name="jamaisCpsDuRemplace" error={Boolean(errors.jamaisCpsDuRemplace)} label="Les parties confirment que la CPS personnelle du remplacé ne sera jamais utilisée directement par le remplaçant." />
+              <CheckboxLine register={register} name="remplacantIdentifiePersonnellement" error={Boolean(errors.remplacantIdentifiePersonnellement)} label="Le remplaçant sera personnellement identifié pour les actes réalisés pendant le remplacement." />
               <CheckboxLine register={register} name="rcpValide" error={Boolean(errors.rcpValide)} label="Le remplaçant atteste disposer d’une assurance responsabilité civile professionnelle valide." />
-              <CheckboxLine register={register} name="autorisationValide" error={Boolean(errors.autorisationValide)} label="Le remplaçant atteste disposer d’une autorisation de remplacement valide." />
+              <CheckboxLine register={register} name="autorisationValide" error={Boolean(errors.autorisationValide)} label="Le remplaçant non installé atteste disposer d’une autorisation de remplacement valide." />
               <CheckboxLine register={register} name="pasPlusDeuxRemplacements" error={Boolean(errors.pasPlusDeuxRemplacements)} label="Le remplaçant atteste ne pas assurer plus de deux remplacements simultanément." />
+              <CheckboxLine register={register} name="informationCpam" error={Boolean(errors.informationCpam)} label="Les CPAM concernées ont été informées des modalités du remplacement." />
+              <CheckboxLine register={register} name="justificatifsRemuneration" error={Boolean(errors.justificatifsRemuneration)} label="Le remplacé s’engage à fournir les justificatifs permettant de vérifier la rémunération due." />
+              <CheckboxLine register={register} name="conventionNationaleInformee" error={Boolean(errors.conventionNationaleInformee)} label="Le remplacé s’engage à informer le remplaçant des dispositions utiles de la Convention nationale." />
+              <CheckboxLine register={register} name="restitutionLocauxMateriel" error={Boolean(errors.restitutionLocauxMateriel)} label="Le remplaçant s’engage à restituer les locaux et le matériel dans l’état initial, sous réserve de l’usage normal." />
+              <CheckboxLine register={register} name="abandonActiviteFinMission" error={Boolean(errors.abandonActiviteFinMission)} label="Le remplaçant s’engage à abandonner ses activités de remplacement auprès de la patientèle du remplacé à la fin de la mission." />
               <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent." />
               <CheckboxLine register={register} name="aucuneContreLettre" error={Boolean(errors.aucuneContreLettre)} label="Les parties déclarent qu’aucune contre-lettre ne modifie le présent contrat." />
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="8" title="Signature" />
+              <StepHeader number="9" title="Signature" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Fait à" error={errors.faitA?.message}>
@@ -463,5 +656,22 @@ function CheckboxLine({
         </p>
       )}
     </div>
+  );
+}
+
+function CheckboxSimple({
+  register,
+  name,
+  label,
+}: {
+  register: UseFormRegister<ContractData>;
+  name: keyof ContractData;
+  label: string;
+}) {
+  return (
+    <label className="mb-2 flex gap-3 text-sm leading-6 text-slate-900">
+      <input className="mt-1 h-5 w-5 shrink-0 md:h-4 md:w-4" type="checkbox" {...register(name)} />
+      <span>{label}</span>
+    </label>
   );
 }
