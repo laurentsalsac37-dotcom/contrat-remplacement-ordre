@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, UseFormRegister, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContractData, contractSchema } from "@/lib/schema";
 import { Field } from "./Field";
@@ -16,7 +16,7 @@ export function ContractApp() {
     watch,
     formState: { errors },
   } = useForm<ContractData>({
-    resolver: zodResolver(contractSchema),
+    resolver: zodResolver(contractSchema) as Resolver<ContractData>,
     defaultValues: {
       remplaceCivilite: "Mme",
       remplaceCpam: "",
@@ -56,8 +56,6 @@ export function ContractApp() {
 
   const inputClass =
     "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100";
-
-  const checkboxClass = "mt-1 h-4 w-4";
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
@@ -171,7 +169,10 @@ export function ContractApp() {
                   <input className={inputClass} {...register("remplacantEmail")} />
                 </Field>
 
-                <Field label="Numéro d’autorisation de remplacement" error={errors.numeroAutorisation?.message}>
+                <Field
+                  label="Numéro d’autorisation de remplacement"
+                  error={errors.numeroAutorisation?.message}
+                >
                   <input className={inputClass} {...register("numeroAutorisation")} />
                 </Field>
 
@@ -179,11 +180,17 @@ export function ContractApp() {
                   <input type="date" className={inputClass} {...register("dateAutorisation")} />
                 </Field>
 
-                <Field label="Conseil ordinal ayant délivré l’autorisation" error={errors.conseilAutorisation?.message}>
+                <Field
+                  label="Conseil ordinal ayant délivré l’autorisation"
+                  error={errors.conseilAutorisation?.message}
+                >
                   <input className={inputClass} {...register("conseilAutorisation")} />
                 </Field>
 
-                <Field label="CPAM ayant autorisé l’exercice" error={errors.cpamAutorisation?.message}>
+                <Field
+                  label="CPAM ayant autorisé l’exercice"
+                  error={errors.cpamAutorisation?.message}
+                >
                   <input className={inputClass} {...register("cpamAutorisation")} />
                 </Field>
               </div>
@@ -247,8 +254,15 @@ export function ContractApp() {
                 <textarea className={inputClass} rows={3} {...register("joursPrecis")} />
               </Field>
 
-              <Field label="Précisions relatives au planning annexé" error={errors.planningAnnexePrecision?.message}>
-                <textarea className={inputClass} rows={3} {...register("planningAnnexePrecision")} />
+              <Field
+                label="Précisions relatives au planning annexé"
+                error={errors.planningAnnexePrecision?.message}
+              >
+                <textarea
+                  className={inputClass}
+                  rows={3}
+                  {...register("planningAnnexePrecision")}
+                />
               </Field>
             </section>
 
@@ -260,7 +274,11 @@ export function ContractApp() {
               </Field>
 
               <Field label="Matériel mis à disposition" error={errors.materielMisADisposition?.message}>
-                <textarea className={inputClass} rows={3} {...register("materielMisADisposition")} />
+                <textarea
+                  className={inputClass}
+                  rows={3}
+                  {...register("materielMisADisposition")}
+                />
               </Field>
 
               <Field label="Logiciel professionnel utilisé" error={errors.logicielProfessionnel?.message}>
@@ -303,8 +321,15 @@ export function ContractApp() {
                   <input type="number" className={inputClass} {...register("pourcentageTiersPayant")} />
                 </Field>
 
-                <Field label="Délai tiers payant en mois" error={errors.delaiReversementTiersPayant?.message}>
-                  <input type="number" className={inputClass} {...register("delaiReversementTiersPayant")} />
+                <Field
+                  label="Délai tiers payant en mois"
+                  error={errors.delaiReversementTiersPayant?.message}
+                >
+                  <input
+                    type="number"
+                    className={inputClass}
+                    {...register("delaiReversementTiersPayant")}
+                  />
                 </Field>
 
                 <Field label="Modalité de paiement" error={errors.modalitePaiement?.message}>
@@ -329,14 +354,20 @@ export function ContractApp() {
                   <input type="number" className={inputClass} {...register("preavisManquement")} />
                 </Field>
 
-                <Field label="Remplacement supérieur à 3 mois ?" error={errors.remplacementSuperieurTroisMois?.message}>
+                <Field
+                  label="Remplacement supérieur à 3 mois ?"
+                  error={errors.remplacementSuperieurTroisMois?.message}
+                >
                   <select className={inputClass} {...register("remplacementSuperieurTroisMois")}>
                     <option value="non">Non</option>
                     <option value="oui">Oui</option>
                   </select>
                 </Field>
 
-                <Field label="Type de périmètre de non-concurrence" error={errors.clauseNonConcurrence?.message}>
+                <Field
+                  label="Type de périmètre de non-concurrence"
+                  error={errors.clauseNonConcurrence?.message}
+                >
                   <select className={inputClass} {...register("clauseNonConcurrence")}>
                     <option value="">Non applicable</option>
                     <option value="rayon">Rayon kilométrique</option>
@@ -475,7 +506,7 @@ function CheckboxLine({
   label,
   error,
 }: {
-  register: any;
+  register: UseFormRegister<ContractData>;
   name: keyof ContractData;
   label: string;
   error: boolean;
@@ -486,7 +517,11 @@ function CheckboxLine({
         <input className="mt-1 h-4 w-4" type="checkbox" {...register(name)} />
         <span>{label}</span>
       </label>
-      {error && <p className="mt-1 text-sm text-red-600">Cette confirmation est obligatoire.</p>}
+      {error && (
+        <p className="mt-1 text-sm text-red-600">
+          Cette confirmation est obligatoire.
+        </p>
+      )}
     </div>
   );
 }
