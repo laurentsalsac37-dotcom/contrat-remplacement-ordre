@@ -24,9 +24,10 @@ export const contractSchema = z
     remplacantVille: z.string().min(1, "Ville obligatoire"),
     remplacantEmail: z.string().email("E-mail invalide"),
     remplacantTelephone: z.string().min(1, "Téléphone obligatoire"),
-    numeroAutorisation: z.string().optional(),
-    dateAutorisation: z.string().optional(),
-    conseilAutorisation: z.string().optional(),
+    numeroAutorisation: z.string().min(1, "Numéro d’autorisation obligatoire"),
+    dateAutorisation: z.string().min(1, "Date de délivrance obligatoire"),
+    dateFinValiditeAutorisation: z.string().min(1, "Date de fin de validité obligatoire"),
+    conseilAutorisation: z.string().min(1, "Conseil ordinal obligatoire"),
     cpamAutorisation: z.string().min(1, "CPAM concernée obligatoire"),
 
     statutRemplacant: z.string().min(1, "Statut du remplaçant obligatoire"),
@@ -86,11 +87,22 @@ export const contractSchema = z
     communesConcernees: z.string().optional(),
     dureeNonConcurrence: z.string().optional(),
     accordOrdreNonConcurrence: z.string().optional(),
+    accordOrdreNotificationConfirmee: z.boolean(),
 
     faitA: z.string().min(1, "Lieu de signature obligatoire"),
     faitLe: z.string().min(1, "Date de signature obligatoire"),
     nombreExemplaires: z.coerce.number().min(3).max(5),
     annexesSelectionnees: z.string().optional(),
+    annexeAttestationRcProf: z.boolean(),
+    annexeAutorisationRemplacement: z.boolean(),
+    annexeJustificatif2400h: z.boolean(),
+    annexePlanning: z.boolean(),
+    annexeInventaireMateriel: z.boolean(),
+    annexeEtatLieuxEntree: z.boolean(),
+    annexeEtatLieuxSortie: z.boolean(),
+    annexeJustificatifAgrementGroupe: z.boolean(),
+    annexeAutreDocument: z.boolean(),
+    annexeAutreDocumentPrecision: z.string().optional(),
 
     remplaceSuspendActivite: z.boolean(),
     remplacantUtiliseSaCps: z.boolean(),
@@ -113,10 +125,23 @@ export const contractSchema = z
     deconventionnementRemplacant: z.boolean(),
     conciliationPrealable: z.boolean(),
     transmissionInformationsContinuiteSoins: z.boolean(),
+    syntheseRelue: z.boolean(),
   })
   .refine((data) => data.motif !== "autre" || Boolean(data.motifAutre), {
     path: ["motifAutre"],
     message: "Le motif doit être précisé.",
+  })
+  .refine((data) => data.dateDebut <= data.dateFin, {
+    path: ["dateFin"],
+    message: "La date de fin doit être postérieure ou égale à la date de début.",
+  })
+  .refine((data) => data.dateAutorisation <= data.dateDebut, {
+    path: ["dateAutorisation"],
+    message: "La date de délivrance doit être antérieure ou égale à la date de début du remplacement.",
+  })
+  .refine((data) => data.dateFin <= data.dateFinValiditeAutorisation, {
+    path: ["dateFinValiditeAutorisation"],
+    message: "La date de fin du remplacement doit être antérieure ou égale à la date de fin de validité de l’autorisation.",
   })
   .refine(
     (data) =>
@@ -280,10 +305,6 @@ export const contractSchema = z
     path: ["restitutionLocauxMateriel"],
     message: "Confirmation obligatoire.",
   })
-  .refine((data) => data.abandonActiviteFinMission, {
-    path: ["abandonActiviteFinMission"],
-    message: "Confirmation obligatoire.",
-  })
   .refine((data) => data.deconventionnementRemplace, {
     path: ["deconventionnementRemplace"],
     message: "Confirmation obligatoire.",
@@ -299,6 +320,40 @@ export const contractSchema = z
   .refine((data) => data.transmissionInformationsContinuiteSoins, {
     path: ["transmissionInformationsContinuiteSoins"],
     message: "Confirmation obligatoire.",
-  });
+  })
+  .refine((data) => data.syntheseRelue, {
+    path: ["syntheseRelue"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine(
+    (data) => {
+      if (data.remplacementSuperieurTroisMois !== "oui") return true;
+
+      if (!data.clauseNonConcurrence || !["rayon", "communes"].includes(data.clauseNonConcurrence)) {
+        return false;
+      }
+
+      if (data.clauseNonConcurrence === "rayon") {
+        return Boolean(data.rayonKm);
+      }
+
+      return Boolean(data.communesConcernees);
+    },
+    {
+      path: ["clauseNonConcurrence"],
+      message: "Un périmètre par rayon ou communes est requis pour un remplacement supérieur à trois mois.",
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.remplacementSuperieurTroisMois !== "oui") return true;
+      if (data.accordOrdreNonConcurrence !== "oui") return true;
+      return data.accordOrdreNotificationConfirmee;
+    },
+    {
+      path: ["accordOrdreNotificationConfirmee"],
+      message: "La notification au conseil de l’Ordre doit être confirmée lorsque l’accord dérogatoire existe.",
+    }
+  );
 
 export type ContractData = z.infer<typeof contractSchema>;

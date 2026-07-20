@@ -20,6 +20,7 @@ const defaultContractValues: Partial<ContractData> = {
   statutRemplacant: "non_installe",
   numeroAutorisation: "",
   dateAutorisation: "",
+  dateFinValiditeAutorisation: "",
   conseilAutorisation: "",
   justificatif2400h: "",
   motif: "conge_annuel",
@@ -58,8 +59,18 @@ const defaultContractValues: Partial<ContractData> = {
   communesConcernees: "",
   dureeNonConcurrence: "",
   accordOrdreNonConcurrence: "",
+  accordOrdreNotificationConfirmee: false,
   nombreExemplaires: 3,
   annexesSelectionnees: "",
+  annexeAttestationRcProf: false,
+  annexeAutorisationRemplacement: false,
+  annexeJustificatif2400h: false,
+  annexePlanning: false,
+  annexeInventaireMateriel: false,
+  annexeEtatLieuxEntree: false,
+  annexeEtatLieuxSortie: false,
+  annexeJustificatifAgrementGroupe: false,
+  annexeAutreDocument: false,
   remplaceSuspendActivite: false,
   remplacantUtiliseSaCps: false,
   jamaisCpsDuRemplace: false,
@@ -81,6 +92,7 @@ const defaultContractValues: Partial<ContractData> = {
   deconventionnementRemplacant: false,
   conciliationPrealable: false,
   transmissionInformationsContinuiteSoins: false,
+  syntheseRelue: false,
 };
 
 export function ContractApp() {
@@ -95,6 +107,7 @@ export function ContractApp() {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ContractData>({
     resolver: zodResolver(contractSchema) as Resolver<ContractData>,
@@ -104,11 +117,21 @@ export function ContractApp() {
   const currentData = watch();
   const exerciceEnGroupeValue = watch("exerciceEnGroupe");
   const typeGroupeValue = watch("typeGroupe");
+  const remplacementSuperieurTroisMoisValue = watch("remplacementSuperieurTroisMois");
+  const preavisCommunAccordValue = Number(watch("preavisCommunAccord") || 0);
+  const preavisManquementValue = Number(watch("preavisManquement") || 0);
   const showAssociatesConfirmation =
     exerciceEnGroupeValue === "oui" &&
     ["societe", "cabinet_groupe", "exercice_commun", "cocontractants"].includes(
       String(typeGroupeValue || "")
     );
+  const showNonConcurrenceDuration = remplacementSuperieurTroisMoisValue === "oui";
+
+  useEffect(() => {
+    if (remplacementSuperieurTroisMoisValue === "oui") {
+      setValue("dureeNonConcurrence", "2 ans");
+    }
+  }, [remplacementSuperieurTroisMoisValue, setValue]);
 
   useEffect(() => {
     try {
@@ -364,6 +387,14 @@ export function ContractApp() {
                     type="date"
                     className={inputClass}
                     {...register("dateAutorisation")}
+                  />
+                </Field>
+
+                <Field label="Date de fin de validité de l’autorisation" error={errors.dateFinValiditeAutorisation?.message}>
+                  <input
+                    type="date"
+                    className={inputClass}
+                    {...register("dateFinValiditeAutorisation")}
                   />
                 </Field>
 
@@ -674,7 +705,11 @@ export function ContractApp() {
               <StepHeader number="7" title="Résiliation et non-concurrence" />
 
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Préavis accord commun en jours" error={errors.preavisCommunAccord?.message}>
+                <Field
+                  label="Préavis accord commun"
+                  error={errors.preavisCommunAccord?.message}
+                  hint={preavisCommunAccordValue <= 1 ? "un préavis de 1 jour" : `un préavis de ${preavisCommunAccordValue} jours`}
+                >
                   <input
                     type="number"
                     inputMode="numeric"
@@ -683,7 +718,11 @@ export function ContractApp() {
                   />
                 </Field>
 
-                <Field label="Préavis en cas de manquement en jours" error={errors.preavisManquement?.message}>
+                <Field
+                  label="Préavis en cas de manquement"
+                  error={errors.preavisManquement?.message}
+                  hint={preavisManquementValue <= 1 ? "un préavis de 1 jour" : `un préavis de ${preavisManquementValue} jours`}
+                >
                   <input
                     type="number"
                     inputMode="numeric"
@@ -716,18 +755,26 @@ export function ContractApp() {
                   />
                 </Field>
 
-                <Field label="Durée de la clause" error={errors.dureeNonConcurrence?.message}>
-                  <input className={inputClass} {...register("dureeNonConcurrence")} />
-                </Field>
+                {showNonConcurrenceDuration && (
+                  <div className="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                    La durée est fixée automatiquement à deux ans pour le régime ordinal.
+                  </div>
+                )}
 
-                <Field label="Accord notifié à l’Ordre ?" error={errors.accordOrdreNonConcurrence?.message}>
-                  <select className={inputClass} {...register("accordOrdreNonConcurrence")}>
-                    <option value="">Non applicable</option>
-                    <option value="oui">Oui</option>
-                    <option value="non">Non</option>
-                  </select>
-                </Field>
+                {showNonConcurrenceDuration && (
+                  <Field label="Accord dérogatoire entre les parties ?" error={errors.accordOrdreNonConcurrence?.message}>
+                    <select className={inputClass} {...register("accordOrdreNonConcurrence")}>
+                      <option value="">Non applicable</option>
+                      <option value="oui">Oui</option>
+                      <option value="non">Non</option>
+                    </select>
+                  </Field>
+                )}
               </div>
+
+              {showNonConcurrenceDuration && watch("accordOrdreNonConcurrence") === "oui" && (
+                <CheckboxLine register={register} name="accordOrdreNotificationConfirmee" error={Boolean(errors.accordOrdreNotificationConfirmee)} label="Le remplaçant et le remplacé confirment que l’accord dérogatoire a été notifié au conseil de l’Ordre compétent." />
+              )}
 
               <Field label="Communes concernées" error={errors.communesConcernees?.message}>
                 <textarea className={inputClass} rows={4} {...register("communesConcernees")} />
@@ -757,7 +804,6 @@ export function ContractApp() {
               <CheckboxLine register={register} name="justificatifsRemuneration" error={Boolean(errors.justificatifsRemuneration)} label="Le remplacé s’engage à fournir les justificatifs permettant de vérifier la rémunération due." />
               <CheckboxLine register={register} name="conventionNationaleInformee" error={Boolean(errors.conventionNationaleInformee)} label="Le remplacé s’engage à informer le remplaçant des dispositions utiles de la Convention nationale." />
               <CheckboxLine register={register} name="restitutionLocauxMateriel" error={Boolean(errors.restitutionLocauxMateriel)} label="Le remplaçant s’engage à restituer les locaux et le matériel dans l’état initial, sous réserve de l’usage normal." />
-              <CheckboxLine register={register} name="abandonActiviteFinMission" error={Boolean(errors.abandonActiviteFinMission)} label="Le remplaçant s’engage à abandonner ses activités de remplacement auprès de la patientèle du remplacé à la fin de la mission." />
               <CheckboxLine register={register} name="transmissionInformationsContinuiteSoins" error={Boolean(errors.transmissionInformationsContinuiteSoins)} label="Le remplaçant s’engage, à la fin de la mission, à cesser ses activités de remplacement auprès des patients du remplacé et à transmettre les informations nécessaires à la continuité des soins." />
               <CheckboxLine register={register} name="conciliationPrealable" error={Boolean(errors.conciliationPrealable)} label="Les parties s’engagent à recourir à une tentative préalable de conciliation en cas de différend relatif au présent contrat." />
               <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent dans le délai d’un mois suivant la signature." />
@@ -765,7 +811,27 @@ export function ContractApp() {
             </section>
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
-              <StepHeader number="9" title="Signature" />
+              <StepHeader number="9" title="Annexes et synthèse" />
+
+              <Field label="Annexes retenues" error={errors.annexesSelectionnees?.message}>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <CheckboxSimple register={register} name="annexeAttestationRcProf" label="Attestation de responsabilité civile professionnelle" />
+                  <CheckboxSimple register={register} name="annexeAutorisationRemplacement" label="Copie de l’autorisation de remplacement" />
+                  <CheckboxSimple register={register} name="annexeJustificatif2400h" label="Justificatif des 18 mois ou 2 400 heures" />
+                  <CheckboxSimple register={register} name="annexePlanning" label="Planning" />
+                  <CheckboxSimple register={register} name="annexeInventaireMateriel" label="Inventaire du matériel" />
+                  <CheckboxSimple register={register} name="annexeEtatLieuxEntree" label="État des lieux d’entrée" />
+                  <CheckboxSimple register={register} name="annexeEtatLieuxSortie" label="État des lieux de sortie" />
+                  <CheckboxSimple register={register} name="annexeJustificatifAgrementGroupe" label="Justificatif d’information ou d’agrément du groupe" />
+                  <CheckboxSimple register={register} name="annexeAutreDocument" label="Autre document renseigné" />
+                </div>
+              </Field>
+
+              <CheckboxLine register={register} name="syntheseRelue" error={Boolean(errors.syntheseRelue)} label="Les parties confirment avoir vérifié la synthèse avant signature." />
+            </section>
+
+            <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
+              <StepHeader number="10" title="Signature" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Fait à" error={errors.faitA?.message}>

@@ -41,7 +41,7 @@ export function ContractPreview({
 
           <Image
             src="/logo-cidoi-37-41.png"
-            alt="Logo de l’Ordre national des infirmiers"
+            alt="Conseil interdépartemental de l’Ordre des infirmiers d’Indre-et-Loire et de Loir-et-Cher"
             width={150}
             height={150}
             className="h-auto w-[150px] object-contain"
