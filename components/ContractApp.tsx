@@ -180,14 +180,13 @@ export function ContractApp() {
   const [showAllSteps, setShowAllSteps] = useState(false);
 
   const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useForm<ContractData>({
+  register,
+  handleSubmit,
+  watch,
+  reset,
+  setValue,
+  formState: { errors },
+} = useForm<ContractData>({
     resolver: zodResolver(
       contractSchema
     ) as Resolver<ContractData>,
@@ -208,9 +207,6 @@ export function ContractApp() {
     "remplacementSuperieurTroisMois"
   );
 
-  const clauseNonConcurrenceValue = watch(
-    "clauseNonConcurrence"
-  );
 
   const accordOrdreNonConcurrenceValue = watch(
     "accordOrdreNonConcurrence"
@@ -236,53 +232,20 @@ export function ContractApp() {
   const showNonReinstallation =
     remplacementSuperieurTroisMoisValue === "oui";
 
-  useEffect(() => {
-    if (remplacementSuperieurTroisMoisValue === "oui") {
-      setValue("dureeNonConcurrence", "2 ans");
+    useEffect(() => {
+  if (remplacementSuperieurTroisMoisValue === "oui") {
+    setValue("dureeNonConcurrence", "2 ans");
+    setValue("clauseNonConcurrence", "rayon");
+    return;
+  }
 
-      if (
-        getValues("clauseNonConcurrence") === "loyaute"
-      ) {
-        setValue("clauseNonConcurrence", "");
-      }
-
-      return;
-    }
-
-    setValue("dureeNonConcurrence", "");
-    setValue("clauseNonConcurrence", "loyaute");
-    setValue("rayonKm", "");
-    setValue("communesConcernees", "");
-    setValue("accordOrdreNonConcurrence", "");
-    setValue(
-      "accordOrdreNotificationConfirmee",
-      false
-    );
-  }, [
-    remplacementSuperieurTroisMoisValue,
-    getValues,
-    setValue,
-  ]);
-
-  useEffect(() => {
-    if (
-      showNonReinstallation &&
-      clauseNonConcurrenceValue !== "rayon"
-    ) {
-      setValue("rayonKm", "");
-    }
-
-    if (
-      showNonReinstallation &&
-      clauseNonConcurrenceValue !== "communes"
-    ) {
-      setValue("communesConcernees", "");
-    }
-  }, [
-    showNonReinstallation,
-    clauseNonConcurrenceValue,
-    setValue,
-  ]);
+  setValue("dureeNonConcurrence", "");
+  setValue("clauseNonConcurrence", "loyaute");
+  setValue("rayonKm", "");
+  setValue("communesConcernees", "");
+  setValue("accordOrdreNonConcurrence", "");
+  setValue("accordOrdreNotificationConfirmee", false);
+}, [remplacementSuperieurTroisMoisValue, setValue]);
 
   useEffect(() => {
     if (accordOrdreNonConcurrenceValue !== "oui") {
@@ -1839,7 +1802,7 @@ export function ContractApp() {
               </section>
             )}
 
-            {isStepVisible(6) && (
+                        {isStepVisible(6) && (
               <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
                 <StepHeader
                   number={6}
@@ -1853,10 +1816,7 @@ export function ContractApp() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <Field
                     label="Préavis en cas de résiliation d’un commun accord"
-                    error={
-                      errors.preavisCommunAccord
-                        ?.message
-                    }
+                    error={errors.preavisCommunAccord?.message}
                     hint={`Un préavis de ${formatDurationLabel(
                       preavisCommunAccordValue
                     )}`}
@@ -1866,18 +1826,13 @@ export function ContractApp() {
                       inputMode="numeric"
                       min={0}
                       className={inputClass}
-                      {...register(
-                        "preavisCommunAccord"
-                      )}
+                      {...register("preavisCommunAccord")}
                     />
                   </Field>
 
                   <Field
                     label="Préavis en cas de manquement"
-                    error={
-                      errors.preavisManquement
-                        ?.message
-                    }
+                    error={errors.preavisManquement?.message}
                     hint={`Un préavis de ${formatDurationLabel(
                       preavisManquementValue
                     )}`}
@@ -1887,91 +1842,30 @@ export function ContractApp() {
                       inputMode="numeric"
                       min={0}
                       className={inputClass}
-                      {...register(
-                        "preavisManquement"
-                      )}
+                      {...register("preavisManquement")}
                     />
                   </Field>
 
                   <Field
                     label="La durée totale du remplacement dépasse-t-elle trois mois, consécutifs ou non ?"
                     error={
-                      errors
-                        .remplacementSuperieurTroisMois
-                        ?.message
+                      errors.remplacementSuperieurTroisMois?.message
                     }
                   >
                     <select
                       className={inputClass}
-                      {...register(
-                        "remplacementSuperieurTroisMois"
-                      )}
+                      {...register("remplacementSuperieurTroisMois")}
                     >
-                      <option value="non">
-                        Non
-                      </option>
-                      <option value="oui">
-                        Oui
-                      </option>
+                      <option value="non">Non</option>
+                      <option value="oui">Oui</option>
                     </select>
                   </Field>
 
                   {showNonReinstallation ? (
-                    <Field
-                      label="Périmètre de non-réinstallation"
-                      error={
-                        errors
-                          .clauseNonConcurrence
-                          ?.message
-                      }
-                    >
-                      <select
-                        className={inputClass}
-                        {...register(
-                          "clauseNonConcurrence"
-                        )}
-                      >
-                        <option value="">
-                          Choisir un périmètre
-                        </option>
-                        <option value="rayon">
-                          Rayon kilométrique
-                        </option>
-                        <option value="communes">
-                          Communes déterminées
-                        </option>
-                      </select>
-                    </Field>
-                  ) : (
-                    <div className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
-  <p className="font-bold">
-    Clause de loyauté et d’absence de concurrence déloyale
-  </p>
-
-  <p className="mt-2">
-    Le remplacement n’excédant pas trois mois, la clause de
-    non-réinstallation prévue pour les remplacements d’une durée
-    supérieure à trois mois ne s’applique pas.
-  </p>
-
-  <p className="mt-2">
-    Le remplaçant s’engage toutefois à respecter une obligation de
-    loyauté et de confraternité à l’égard du remplacé. Il s’interdit,
-    pendant le remplacement et à son issue, tout détournement de
-    patientèle, toute sollicitation personnelle des patients du
-    remplacé et tout procédé constitutif d’une concurrence déloyale.
-  </p>
-</div>
-                  )}
-
-                  {showNonReinstallation &&
-                    clauseNonConcurrenceValue ===
-                      "rayon" && (
+                    <>
                       <Field
-                        label="Rayon en kilomètres"
-                        error={
-                          errors.rayonKm?.message
-                        }
+                        label="Rayon de non-réinstallation en kilomètres"
+                        error={errors.rayonKm?.message}
                       >
                         <input
                           type="number"
@@ -1981,84 +1875,90 @@ export function ContractApp() {
                           {...register("rayonKm")}
                         />
                       </Field>
-                    )}
 
-                  {showNonReinstallation &&
-                    clauseNonConcurrenceValue ===
-                      "communes" && (
+                      <div className="md:col-span-2">
+                        <Field
+                          label="Communes concernées par la non-réinstallation"
+                          error={errors.communesConcernees?.message}
+                        >
+                          <textarea
+                            className={inputClass}
+                            rows={4}
+                            placeholder="Indiquer les communes concernées"
+                            {...register("communesConcernees")}
+                          />
+                        </Field>
+                      </div>
+
+                      <div className="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+                        <p className="font-semibold text-slate-900">
+                          Restriction de non-réinstallation
+                        </p>
+
+                        <p className="mt-2">
+                          Pour un remplacement supérieur à trois mois,
+                          consécutifs ou non, la durée de la restriction de
+                          non-réinstallation est fixée à deux ans. Le rayon
+                          kilométrique et les communes concernés doivent être
+                          précisés dans le contrat.
+                        </p>
+                      </div>
+
                       <Field
-                        label="Communes concernées"
+                        label="Un accord dérogatoire est-il conclu entre les parties ?"
                         error={
-                          errors
-                            .communesConcernees
-                            ?.message
+                          errors.accordOrdreNonConcurrence?.message
                         }
                       >
-                        <textarea
+                        <select
                           className={inputClass}
-                          rows={4}
-                          {...register(
-                            "communesConcernees"
-                          )}
-                        />
+                          {...register("accordOrdreNonConcurrence")}
+                        >
+                          <option value="">Choisir</option>
+                          <option value="non">Non</option>
+                          <option value="oui">Oui</option>
+                        </select>
                       </Field>
-                    )}
+                    </>
+                  ) : (
+                    <div className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+                      <p className="font-bold">
+                        Obligations de loyauté et d’absence de concurrence
+                        déloyale
+                      </p>
 
-                  {showNonReinstallation && (
-                    <div className="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-                      Pour un remplacement supérieur
-                      à trois mois, consécutifs ou
-                      non, la durée de la restriction
-                      de réinstallation est fixée à
-                      deux ans.
+                      <p className="mt-2">
+                        Le remplacement n’excédant pas trois mois, la
+                        restriction de non-réinstallation prévue pour les
+                        remplacements d’une durée supérieure à trois mois ne
+                        s’applique pas.
+                      </p>
+
+                      <p className="mt-2">
+                        Le remplaçant demeure toutefois tenu au respect de ses
+                        obligations déontologiques de loyauté et de
+                        confraternité. Il s’interdit tout détournement ou
+                        tentative de détournement de patientèle et, à la fin
+                        de sa mission, cesse son activité auprès de la
+                        patientèle du remplacé.
+                      </p>
                     </div>
-                  )}
-
-                  {showNonReinstallation && (
-                    <Field
-                      label="Un accord dérogatoire est-il conclu entre les parties ?"
-                      error={
-                        errors
-                          .accordOrdreNonConcurrence
-                          ?.message
-                      }
-                    >
-                      <select
-                        className={inputClass}
-                        {...register(
-                          "accordOrdreNonConcurrence"
-                        )}
-                      >
-                        <option value="">
-                          Choisir
-                        </option>
-                        <option value="non">
-                          Non
-                        </option>
-                        <option value="oui">
-                          Oui
-                        </option>
-                      </select>
-                    </Field>
                   )}
                 </div>
 
                 {showNonReinstallation &&
-                  accordOrdreNonConcurrenceValue ===
-                    "oui" && (
+                  accordOrdreNonConcurrenceValue === "oui" && (
                     <CheckboxLine
                       register={register}
                       name="accordOrdreNotificationConfirmee"
                       error={Boolean(
-                        errors
-                          .accordOrdreNotificationConfirmee
+                        errors.accordOrdreNotificationConfirmee
                       )}
                       label="Les parties confirment que l’accord dérogatoire a été notifié au conseil de l’Ordre compétent."
                     />
                   )}
               </section>
             )}
-
             {isStepVisible(7) && (
               <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-4 md:p-5">
                 <StepHeader
