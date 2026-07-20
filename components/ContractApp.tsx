@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Resolver, UseFormRegister, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContractData, contractSchema } from "@/lib/schema";
@@ -10,89 +10,121 @@ import { LegalAudit } from "./LegalAudit";
 import { TransmissionMail } from "./TransmissionMail";
 import { SignaturePad } from "./SignaturePad";
 
+const DRAFT_STORAGE_KEY = "contrat-remplacement-ordre-draft-v1";
+
+const defaultContractValues: Partial<ContractData> = {
+  remplaceCivilite: "Mme",
+  remplaceCpam: "",
+  remplacantCivilite: "Mme",
+  cpamAutorisation: "",
+  statutRemplacant: "non_installe",
+  numeroAutorisation: "",
+  dateAutorisation: "",
+  conseilAutorisation: "",
+  justificatif2400h: "",
+  motif: "conge_annuel",
+  typeRemplacement: "continu",
+  remplacementPlus24h: "oui",
+  remplacementRepete: "non",
+  exerciceEnGroupe: "non",
+  typeGroupe: "",
+  clauseAgrement: "",
+  agrementObtenu: "",
+  confreresInformes: "",
+  patientsInformes: false,
+  associesInformes: false,
+  lieuRemplacement: "cabinet_remplace",
+  etatLieuxDebut: "non",
+  etatLieuxFin: "non",
+  inventaireMateriel: "non",
+  modeFacturation: "cps_remplacant",
+  pourcentageReverse: 90,
+  delaiReversement: 1,
+  pourcentageTiersPayant: 90,
+  delaiReversementTiersPayant: 1,
+  modalitePaiement: "virement",
+  redevancePrevue: "oui",
+  tauxRedevance: 10,
+  assietteSoins: true,
+  assietteMajorationsNuit: true,
+  assietteDimancheFeries: true,
+  assietteFraisKilometriques: false,
+  fraisKilometriquesExclus: "oui",
+  preavisCommunAccord: 7,
+  preavisManquement: 7,
+  remplacementSuperieurTroisMois: "non",
+  clauseNonConcurrence: "",
+  rayonKm: "",
+  communesConcernees: "",
+  dureeNonConcurrence: "",
+  accordOrdreNonConcurrence: "",
+  nombreExemplaires: 3,
+  annexesSelectionnees: "",
+  remplaceSuspendActivite: false,
+  remplacantUtiliseSaCps: false,
+  jamaisCpsDuRemplace: false,
+  remplacantIdentifiePersonnellement: false,
+  rcpValide: false,
+  autorisationValide: false,
+  pasPlusDeuxRemplacements: false,
+  transmissionOrdre: false,
+  aucuneContreLettre: false,
+  absenceInterdictionRemplace: false,
+  absenceInterdictionRemplacant: false,
+  absenceLiquidationJudiciaire: false,
+  informationCpam: false,
+  justificatifsRemuneration: false,
+  conventionNationaleInformee: false,
+  restitutionLocauxMateriel: false,
+  abandonActiviteFinMission: false,
+  deconventionnementRemplace: false,
+  deconventionnementRemplacant: false,
+  conciliationPrealable: false,
+  transmissionInformationsContinuiteSoins: false,
+};
+
 export function ContractApp() {
   const [validatedData, setValidatedData] = useState<ContractData | null>(null);
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   const [signatureRemplace, setSignatureRemplace] = useState("");
   const [signatureRemplacant, setSignatureRemplacant] = useState("");
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ContractData>({
     resolver: zodResolver(contractSchema) as Resolver<ContractData>,
-    defaultValues: {
-      remplaceCivilite: "Mme",
-      remplaceCpam: "",
-      remplacantCivilite: "Mme",
-      cpamAutorisation: "",
-      statutRemplacant: "non_installe",
-      numeroAutorisation: "",
-      dateAutorisation: "",
-      conseilAutorisation: "",
-      justificatif2400h: "",
-      motif: "conge_annuel",
-      typeRemplacement: "continu",
-      remplacementPlus24h: "oui",
-      remplacementRepete: "non",
-      exerciceEnGroupe: "non",
-      typeGroupe: "",
-      clauseAgrement: "",
-      agrementObtenu: "",
-      confreresInformes: "",
-      lieuRemplacement: "cabinet_remplace",
-      etatLieuxDebut: "non",
-      etatLieuxFin: "non",
-      inventaireMateriel: "non",
-      modeFacturation: "cps_remplacant",
-      pourcentageReverse: 90,
-      delaiReversement: 1,
-      pourcentageTiersPayant: 90,
-      delaiReversementTiersPayant: 1,
-      modalitePaiement: "virement",
-      redevancePrevue: "oui",
-      tauxRedevance: 10,
-      assietteSoins: true,
-      assietteMajorationsNuit: true,
-      assietteDimancheFeries: true,
-      assietteFraisKilometriques: false,
-      fraisKilometriquesExclus: "oui",
-      preavisCommunAccord: 7,
-      preavisManquement: 7,
-      remplacementSuperieurTroisMois: "non",
-      clauseNonConcurrence: "",
-      rayonKm: "",
-      communesConcernees: "",
-      dureeNonConcurrence: "",
-      accordOrdreNonConcurrence: "",
-      nombreExemplaires: 3,
-      remplaceSuspendActivite: false,
-      remplacantUtiliseSaCps: false,
-      jamaisCpsDuRemplace: false,
-      remplacantIdentifiePersonnellement: false,
-      rcpValide: false,
-      autorisationValide: false,
-      pasPlusDeuxRemplacements: false,
-      transmissionOrdre: false,
-      aucuneContreLettre: false,
-      absenceInterdictionRemplace: false,
-      absenceInterdictionRemplacant: false,
-      absenceLiquidationJudiciaire: false,
-      informationCpam: false,
-      justificatifsRemuneration: false,
-      conventionNationaleInformee: false,
-      restitutionLocauxMateriel: false,
-      abandonActiviteFinMission: false,
-      deconventionnementRemplace: false,
-      deconventionnementRemplacant: false,
-      conciliationPrealable: false,
-      transmissionInformationsContinuiteSoins: false,
-    },
+    defaultValues: defaultContractValues as ContractData,
   });
 
   const currentData = watch();
+  const exerciceEnGroupeValue = watch("exerciceEnGroupe");
+  const typeGroupeValue = watch("typeGroupe");
+  const showAssociatesConfirmation =
+    exerciceEnGroupeValue === "oui" &&
+    ["societe", "cabinet_groupe", "exercice_commun", "cocontractants"].includes(
+      String(typeGroupeValue || "")
+    );
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as Partial<ContractData> & { savedAt?: string };
+      if (parsed.savedAt) {
+        setDraftSavedAt(parsed.savedAt);
+      }
+
+      reset({ ...defaultContractValues, ...parsed } as ContractData);
+    } catch {
+      // Ignore malformed local draft data.
+    }
+  }, [reset]);
 
   function onSubmit(data: ContractData) {
     setValidatedData(data);
@@ -100,6 +132,34 @@ export function ContractApp() {
     setTimeout(() => {
       window.print();
     }, 300);
+  }
+
+  function saveDraft() {
+    const values = watch();
+    const savedAt = new Date().toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const payload = { ...values, savedAt };
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
+    setDraftSavedAt(savedAt);
+  }
+
+  function clearAllData() {
+    if (!window.confirm("Êtes-vous sûr de vouloir effacer toutes les données saisies ?")) {
+      return;
+    }
+
+    reset(defaultContractValues as ContractData);
+    setValidatedData(null);
+    setSignatureRemplace("");
+    setSignatureRemplacant("");
+    setDraftSavedAt(null);
+    window.localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
 
   const inputClass =
@@ -126,6 +186,43 @@ export function ContractApp() {
             les honoraires, les modalités de facturation et les attestations
             obligatoires.
           </p>
+
+          <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+            Les informations saisies sont traitées localement dans votre navigateur. Elles ne sont ni enregistrées sur un serveur ni transmises à un tiers.
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={saveDraft}
+              className="rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-800"
+            >
+              Enregistrer un brouillon sur cet appareil
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+                setDraftSavedAt(null);
+              }}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700"
+            >
+              Supprimer le brouillon
+            </button>
+            <button
+              type="button"
+              onClick={clearAllData}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700"
+            >
+              Effacer toutes les données saisies
+            </button>
+          </div>
+
+          {draftSavedAt && (
+            <p className="mt-2 text-sm text-slate-600">
+              Dernière sauvegarde locale : {draftSavedAt}
+            </p>
+          )}
 
           <button
             type="button"
@@ -258,7 +355,7 @@ export function ContractApp() {
                   />
                 </Field>
 
-                <Field label="Numéro d’autorisation de remplacement" error={errors.numeroAutorisation?.message}>
+                <Field label="Numéro d’autorisation de remplacement" error={errors.numeroAutorisation?.message} hint="Ce numéro doit être conservé pour la preuve de l’autorisation ordinale de remplacement.">
                   <input className={inputClass} {...register("numeroAutorisation")} />
                 </Field>
 
@@ -282,6 +379,7 @@ export function ContractApp() {
               <Field
                 label="Justificatif des 18 mois ou 2 400 heures, si remplaçant non installé"
                 error={errors.justificatif2400h?.message}
+                hint="Ce justificatif peut être joint en annexe aux fins de vérification administrative."
               >
                 <input className={inputClass} {...register("justificatif2400h")} />
               </Field>
@@ -389,11 +487,10 @@ export function ContractApp() {
                 <Field label="Type de groupe" error={errors.typeGroupe?.message}>
                   <select className={inputClass} {...register("typeGroupe")}>
                     <option value="">Non concerné</option>
-                    <option value="scp">SCP</option>
-                    <option value="sel">SEL</option>
-                    <option value="association">Association</option>
+                    <option value="societe">Société</option>
                     <option value="cabinet_groupe">Cabinet de groupe</option>
-                    <option value="contrat_exercice_commun">Contrat d’exercice en commun</option>
+                    <option value="exercice_commun">Exercice commun</option>
+                    <option value="cocontractants">Cocontractants</option>
                     <option value="autre">Autre</option>
                   </select>
                 </Field>
@@ -540,7 +637,7 @@ export function ContractApp() {
                   </select>
                 </Field>
 
-                <Field label="Taux de redevance en %" error={errors.tauxRedevance?.message}>
+                <Field label="Taux de redevance en %" error={errors.tauxRedevance?.message} hint="La redevance correspond aux frais et services fournis. Son taux et son assiette doivent être définis sans ambiguïté.">
                   <input
                     type="number"
                     inputMode="numeric"
@@ -640,7 +737,11 @@ export function ContractApp() {
             <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-4 md:p-5">
               <StepHeader number="8" title="Déclarations obligatoires" />
 
-              <CheckboxLine register={register} name="remplaceSuspendActivite" error={Boolean(errors.remplaceSuspendActivite)} label="L’infirmier remplacé confirme suspendre son activité pendant les périodes de remplacement." />
+              <CheckboxLine register={register} name="remplaceSuspendActivite" error={Boolean(errors.remplaceSuspendActivite)} label="L’infirmier remplacé s’interdit, pendant les périodes couvertes par le présent contrat, toute activité professionnelle infirmière objet du remplacement, sous réserve du suivi d’une formation professionnelle, de l’assistance à une personne en péril et de la participation à un dispositif de secours dans les conditions prévues par les textes applicables." />
+              <CheckboxLine register={register} name="patientsInformes" error={Boolean(errors.patientsInformes)} label="Les patients sont informés dès que possible de la présence, de l’identité et de la qualité de l’infirmier remplaçant." />
+              {showAssociatesConfirmation && (
+                <CheckboxLine register={register} name="associesInformes" error={Boolean(errors.associesInformes)} label="Le remplacé confirme avoir informé ses associés ou cocontractants et leur avoir communiqué une copie du présent contrat lorsque les statuts ou conventions applicables l’exigent." />
+              )}
               <CheckboxLine register={register} name="absenceInterdictionRemplace" error={Boolean(errors.absenceInterdictionRemplace)} label="L’infirmier remplacé atteste ne pas faire l’objet d’une interdiction d’exercice." />
               <CheckboxLine register={register} name="absenceInterdictionRemplacant" error={Boolean(errors.absenceInterdictionRemplacant)} label="L’infirmier remplaçant atteste ne pas faire l’objet d’une interdiction d’exercice." />
               <CheckboxLine register={register} name="absenceLiquidationJudiciaire" error={Boolean(errors.absenceLiquidationJudiciaire)} label="Les parties attestent ne pas faire l’objet d’une liquidation judiciaire incompatible avec l’exercice ou le remplacement." />
@@ -684,6 +785,10 @@ export function ContractApp() {
                   />
                 </Field>
               </div>
+
+              <Field label="Annexes sélectionnées" error={errors.annexesSelectionnees?.message}>
+                <textarea className={inputClass} rows={3} {...register("annexesSelectionnees")} />
+              </Field>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <SignaturePad

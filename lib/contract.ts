@@ -185,6 +185,10 @@ ${value(data.agrementObtenu)}
 Information des confrères ou associés d’exercice :
 ${value(data.confreresInformes)}
 
+Les patients sont informés dès que possible de la présence, de l’identité et de la qualité de l’infirmier remplaçant : ${yesNo(data.patientsInformes)}.
+
+Lorsque l’exercice en groupe implique des associés ou des cocontractants, le remplacé confirme avoir informé ces personnes et leur avoir communiqué une copie du présent contrat : ${yesNo(data.associesInformes)}.
+
 Lorsque l’exercice en groupe impose un agrément, l’infirmier remplacé s’engage à obtenir cet agrément avant le début du remplacement. Même en l’absence d’agrément obligatoire, les parties rappellent l’importance de l’information préalable des confrères au titre de la bonne confraternité.
 
 ARTICLE 5 - LIEU D’EXERCICE ET MOYENS MIS À DISPOSITION
@@ -389,6 +393,8 @@ Fait à ${value(data.faitA)}, le ${value(data.faitLe)}.
 Trois exemplaires au minimum sont requis.
 
 Le présent contrat est établi en ${value(data.nombreExemplaires)} exemplaires, au minimum trois.
+
+Annexes sélectionnées : ${value(data.annexesSelectionnees)}.
 
 Les signatures des parties figurent ci-après.
 

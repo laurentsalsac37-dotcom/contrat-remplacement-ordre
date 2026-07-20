@@ -53,6 +53,19 @@ export function ContractPreview({
           {buildContractText(data)}
         </div>
 
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-700">
+            Synthèse préalable à la signature
+          </p>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
+            <li>• Motif : {data.motif ? String(data.motif) : "à compléter"}</li>
+            <li>• Période : {data.dateDebut || "à compléter"} → {data.dateFin || "à compléter"}</li>
+            <li>• Facturation : {data.modeFacturation || "à compléter"}</li>
+            <li>• Autorisation de remplacement : {data.numeroAutorisation || "à compléter"}</li>
+            <li>• Déclarations patients / associés : {data.patientsInformes ? "patients informés" : "patients à informer"}; {data.associesInformes ? "associés/cocontractants informés" : "associés/cocontractants à informer"}</li>
+          </ul>
+        </div>
+
         <div className="mt-10 grid gap-8 md:grid-cols-2">
           <div className="min-h-40 border-t border-slate-300 pt-4">
             <p className="mb-3 text-sm font-semibold text-slate-900">

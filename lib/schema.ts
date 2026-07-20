@@ -47,6 +47,8 @@ export const contractSchema = z
     clauseAgrement: z.string().optional(),
     agrementObtenu: z.string().optional(),
     confreresInformes: z.string().optional(),
+    patientsInformes: z.boolean(),
+    associesInformes: z.boolean(),
 
     adresseExercice: z.string().min(1, "Adresse du lieu d’exercice obligatoire"),
     lieuRemplacement: z.string().min(1, "Lieu de remplacement obligatoire"),
@@ -88,6 +90,7 @@ export const contractSchema = z
     faitA: z.string().min(1, "Lieu de signature obligatoire"),
     faitLe: z.string().min(1, "Date de signature obligatoire"),
     nombreExemplaires: z.coerce.number().min(3).max(5),
+    annexesSelectionnees: z.string().optional(),
 
     remplaceSuspendActivite: z.boolean(),
     remplacantUtiliseSaCps: z.boolean(),
@@ -189,6 +192,25 @@ export const contractSchema = z
     {
       path: ["tauxRedevance"],
       message: "Le taux de redevance doit correspondre à 100 % moins le pourcentage reversé au remplaçant.",
+    }
+  )
+  .refine((data) => data.patientsInformes, {
+    path: ["patientsInformes"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine(
+    (data) => {
+      const requiresAssociesNotice =
+        data.exerciceEnGroupe === "oui" &&
+        ["societe", "cabinet_groupe", "exercice_commun", "cocontractants"].includes(
+          String(data.typeGroupe || "")
+        );
+
+      return !requiresAssociesNotice || data.associesInformes;
+    },
+    {
+      path: ["associesInformes"],
+      message: "Confirmation obligatoire.",
     }
   )
   .refine((data) => data.remplaceSuspendActivite, {

@@ -176,6 +176,36 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
     }
   }
 
+  if (!data.patientsInformes) {
+    items.push({
+      level: "blocking",
+      title: "Information des patients",
+      message:
+        "Les patients doivent être informés dès que possible de la présence, de l’identité et de la qualité du remplaçant.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Information des patients",
+      message: "L’information des patients est confirmée.",
+    })
+  }
+
+  const requiresAssociesNotice =
+    data.exerciceEnGroupe === "oui" &&
+    ["societe", "cabinet_groupe", "exercice_commun", "cocontractants"].includes(
+      String(data.typeGroupe || "")
+    );
+
+  if (requiresAssociesNotice && !data.associesInformes) {
+    items.push({
+      level: "blocking",
+      title: "Information des associés ou cocontractants",
+      message:
+        "Lorsque le remplacement intervient dans un cadre de groupe, de société ou de cocontractants, l’information des associés ou cocontractants doit être confirmée.",
+    })
+  }
+
   if (!data.informationCpam) {
     items.push({
       level: "blocking",
