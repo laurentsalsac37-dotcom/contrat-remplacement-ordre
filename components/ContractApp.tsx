@@ -476,7 +476,7 @@ function isStepVisible(step: number) {
               </div>
             </section>
             )}
-
+            {isStepVisible(1) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="2" title="Infirmier remplaçant" />
 
@@ -581,7 +581,8 @@ function isStepVisible(step: number) {
                 </Field>
               </div>
             </section>
-
+            )}
+            {isStepVisible(3) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="3" title="Motif, durée et contrat écrit" />
 
@@ -651,7 +652,8 @@ function isStepVisible(step: number) {
                 />
               </Field>
             </section>
-
+            )}
+            {isStepVisible(4) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="4" title="Exercice en groupe, lieu et matériel" />
 
@@ -722,7 +724,8 @@ function isStepVisible(step: number) {
                 <textarea className={inputClass} rows={4} {...register("secretariat")} />
               </Field>
             </section>
-
+            )}
+            {isStepVisible(4) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="5" title="État des lieux et restitution" />
 
@@ -749,7 +752,8 @@ function isStepVisible(step: number) {
                 </Field>
               </div>
             </section>
-
+            )}
+            {isStepVisible(5) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="6" title="Facturation, honoraires et redevance" />
 
@@ -848,7 +852,8 @@ function isStepVisible(step: number) {
                 </Field>
               </div>
             </section>
-
+            )}
+            {isStepVisible(6) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="7" title="Résiliation et non-concurrence" />
 
@@ -928,7 +933,8 @@ function isStepVisible(step: number) {
                 <textarea className={inputClass} rows={4} {...register("communesConcernees")} />
               </Field>
             </section>
-
+            )}
+            {isStepVisible(7) && (
             <section className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-4 md:p-5">
               <StepHeader number="8" title="Déclarations obligatoires" />
 
@@ -957,7 +963,8 @@ function isStepVisible(step: number) {
               <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent dans le délai d’un mois suivant la signature." />
               <CheckboxLine register={register} name="aucuneContreLettre" error={Boolean(errors.aucuneContreLettre)} label="Les parties déclarent qu’aucune contre-lettre ne modifie le présent contrat." />
             </section>
-
+            )}
+            {isStepVisible(8) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="9" title="Annexes et synthèse" />
 
@@ -977,7 +984,8 @@ function isStepVisible(step: number) {
 
               <CheckboxLine register={register} name="syntheseRelue" error={Boolean(errors.syntheseRelue)} label="Les parties confirment avoir vérifié la synthèse avant signature." />
             </section>
-
+            )}
+            {isStepVisible(8) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="10" title="Signature" />
 
@@ -1018,6 +1026,7 @@ function isStepVisible(step: number) {
                 />
               </div>
             </section>
+            )}
 
             <button
               type="submit"
