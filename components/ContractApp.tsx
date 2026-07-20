@@ -13,6 +13,49 @@ import { SignaturePad } from "./SignaturePad";
 
 const DRAFT_STORAGE_KEY = "contrat-remplacement-ordre-draft-v1";
 
+const FORM_STEPS = [
+  {
+    number: 1,
+    title: "Infirmier remplacé",
+    description: "Identité et coordonnées professionnelles",
+  },
+  {
+    number: 2,
+    title: "Infirmier remplaçant",
+    description: "Identité, autorisation et justificatifs",
+  },
+  {
+    number: 3,
+    title: "Motif et période",
+    description: "Organisation et durée du remplacement",
+  },
+  {
+    number: 4,
+    title: "Exercice, lieu et matériel",
+    description: "Groupe, cabinet, matériel et état des lieux",
+  },
+  {
+    number: 5,
+    title: "Honoraires et facturation",
+    description: "Rétrocession, tiers payant et redevance",
+  },
+  {
+    number: 6,
+    title: "Résiliation et non-réinstallation",
+    description: "Préavis et règles après le remplacement",
+  },
+  {
+    number: 7,
+    title: "Déclarations obligatoires",
+    description: "Attestations professionnelles et ordinales",
+  },
+  {
+    number: 8,
+    title: "Annexes et signatures",
+    description: "Vérification, annexes et finalisation",
+  },
+] as const;
+
 const defaultContractValues: Partial<ContractData> = {
   remplaceCivilite: "Mme",
   remplaceCpam: "",
@@ -102,7 +145,8 @@ export function ContractApp() {
   const [signatureRemplace, setSignatureRemplace] = useState("");
   const [signatureRemplacant, setSignatureRemplacant] = useState("");
   const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
-
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showAllSteps, setShowAllSteps] = useState(false);
   const {
     register,
     handleSubmit,
@@ -174,8 +218,10 @@ export function ContractApp() {
   }
 
   function clearAllData() {
+    
     if (!window.confirm("Êtes-vous sûr de vouloir effacer toutes les données saisies ?")) {
       return;
+      
     }
 
     reset(defaultContractValues as ContractData);
@@ -185,7 +231,42 @@ export function ContractApp() {
     setDraftSavedAt(null);
     window.localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
+function goToNextStep() {
+  setCurrentStep((step) => Math.min(step + 1, FORM_STEPS.length));
 
+  window.setTimeout(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, 50);
+}
+
+function goToPreviousStep() {
+  setCurrentStep((step) => Math.max(step - 1, 1));
+
+  window.setTimeout(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, 50);
+}
+
+function goToStep(step: number) {
+  setCurrentStep(step);
+
+  window.setTimeout(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, 50);
+}
+
+function isStepVisible(step: number) {
+  return showAllSteps || currentStep === step;
+}
   const inputClass =
     "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-950 outline-none focus:border-red-700 focus:ring-2 focus:ring-red-100 md:px-3 md:py-2 md:text-sm";
 
@@ -263,6 +344,71 @@ export function ContractApp() {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-4 rounded-none bg-white p-4 shadow-sm md:space-y-6 md:rounded-2xl md:p-6"
           >
+            <div className="no-print mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+  <div className="flex flex-col gap-4">
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-red-700">
+          Étape {currentStep} sur {FORM_STEPS.length}
+        </p>
+
+        <h2 className="mt-1 text-xl font-bold text-slate-950">
+          {FORM_STEPS[currentStep - 1].title}
+        </h2>
+
+        <p className="mt-1 text-sm text-slate-600">
+          {FORM_STEPS[currentStep - 1].description}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setShowAllSteps((value) => !value)}
+        className="shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+      >
+        {showAllSteps
+          ? "Revenir au mode guidé"
+          : "Afficher toutes les étapes"}
+      </button>
+    </div>
+
+    <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+      <div
+        className="h-full rounded-full bg-red-700 transition-all duration-300"
+        style={{
+          width: `${(currentStep / FORM_STEPS.length) * 100}%`,
+        }}
+      />
+    </div>
+
+    <div className="hidden grid-cols-4 gap-2 lg:grid">
+      {FORM_STEPS.map((step) => {
+        const active = currentStep === step.number;
+        const completed = currentStep > step.number;
+
+        return (
+          <button
+            key={step.number}
+            type="button"
+            onClick={() => goToStep(step.number)}
+            className={`rounded-xl border px-3 py-2 text-left text-xs transition ${
+              active
+                ? "border-red-700 bg-red-50 text-red-800"
+                : completed
+                  ? "border-green-200 bg-green-50 text-green-800"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <span className="block font-bold">
+              {completed ? "✓" : step.number}. {step.title}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</div>
+{isStepVisible(1) && (
             <section className="space-y-4">
               <StepHeader number="1" title="Infirmier remplacé" />
 
@@ -329,6 +475,7 @@ export function ContractApp() {
                 </Field>
               </div>
             </section>
+            )}
 
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="2" title="Infirmier remplaçant" />
