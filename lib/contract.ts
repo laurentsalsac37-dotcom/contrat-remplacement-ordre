@@ -213,6 +213,7 @@ type PersonGrammar = {
   articleRoleRemplacant: string;
   pronomSujet: string;
   possessif: string;
+  identifie: string;
 };
 
 function grammarForCivilite(civilite?: string): PersonGrammar {
@@ -231,6 +232,7 @@ function grammarForCivilite(civilite?: string): PersonGrammar {
       articleRoleRemplacant: "l’infirmière remplaçante",
       pronomSujet: "Elle",
       possessif: "sa",
+      identifie: "identifiée",
     };
   }
 
@@ -248,6 +250,7 @@ function grammarForCivilite(civilite?: string): PersonGrammar {
     articleRoleRemplacant: "l’infirmier remplaçant",
     pronomSujet: "Il",
     possessif: "son",
+    identifie: "identifié",
   };
 }
 
@@ -334,11 +337,11 @@ function buildNonConcurrenceText(
   const nonConcurrenceApplicable =
     data.remplacementSuperieurTroisMois === "oui";
 
-  if (!nonConcurrenceApplicable) {
-    return `La durée totale du remplacement n’excède pas trois mois, consécutifs ou non. Aucune restriction spécifique de réinstallation n’est stipulée au titre de l’article R. 4312-87 du Code de la santé publique.
+ if (!nonConcurrenceApplicable) {
+  return `La durée totale du remplacement n’excède pas trois mois, consécutifs ou non. Aucune restriction spécifique de réinstallation n’est stipulée au titre de l’article R. 4312-87 du Code de la santé publique.
 
-${remplacantGrammar.articleRoleRemplacant.charAt(0).toUpperCase()}${remplacantGrammar.articleRoleRemplacant.slice(1)} reste tenue à ses obligations de loyauté, de confraternité et d’absence de détournement de patientèle.`;
-  }
+Les obligations de loyauté, de confraternité et d’absence de détournement de patientèle demeurent applicables à ${remplacantGrammar.articleRoleRemplacant}.`;
+}
 
   const perimetreElements: string[] = [];
 
@@ -372,7 +375,7 @@ ${remplacantGrammar.articleRoleRemplacant.charAt(0).toUpperCase()}${remplacantGr
 
   return `La durée totale du remplacement excède trois mois, consécutifs ou non.
 
-Conformément à l’article R. 4312-87 du Code de la santé publique, ${remplacantGrammar.articleRoleRemplacant} ne devra pas, pendant une durée de deux ans, s’installer dans un cabinet où elle ou il entrerait en concurrence directe avec ${remplaceGrammar.articleRoleRemplace}, sauf accord entre les parties notifié au conseil de l’Ordre compétent.
+Conformément à l’article R. 4312-87 du Code de la santé publique, ${remplacantGrammar.articleRoleRemplacant} ne devra pas, pendant une durée de deux ans, s’installer dans un cabinet où cette dernière ou ce dernier entrerait en concurrence directe ${remplaceGrammar.articleRoleRemplace}, sauf accord entre les parties notifié au conseil de l’Ordre compétent.
 
 Le périmètre retenu est le suivant : ${perimetre}.
 
@@ -414,11 +417,11 @@ export function buildContractText(data: Partial<ContractData>) {
     ? " Une copie du justificatif est annexée au présent contrat."
     : "";
 
-  const patientsInformationText = data.patientsInformes
-  ? "Les parties confirment que les patients seront informés dès que possible de la présence, de l’identité et de la qualité de l’infirmier remplaçant."
-  : "L’information des patients sur la présence, l’identité et de la qualité de l’infirmier remplaçant devra être confirmée avant la signature du contrat.";
+const patientsInformationText = data.patientsInformes
+  ? `Les parties confirment que les patients seront informés dès que possible de la présence, de l’identité et de la qualité de ${remplacantGrammar.articleRoleRemplacant}.`
+  : `L’information des patients sur la présence, l’identité et la qualité de ${remplacantGrammar.articleRoleRemplacant} devra être confirmée avant la signature du contrat.`;
   
-  const groupeText = exerciceEnGroupe
+    const groupeText = exerciceEnGroupe
     ? `
 Type d’exercice en groupe :
 ${typeGroupeLabel(data.typeGroupe)}
@@ -582,11 +585,11 @@ ARTICLE 8 - CPS, FEUILLES DE SOINS ET FACTURATION
 Le mode de facturation retenu est le suivant :
 ${modeFacturationLabel(data.modeFacturation)}
 
-${remplacantGrammar.articleRoleRemplacant.charAt(0).toUpperCase()}${remplacantGrammar.articleRoleRemplacant.slice(1)} est personnellement identifié pour les actes réalisés pendant le remplacement.
+${remplacantGrammar.articleRoleRemplacant.charAt(0).toUpperCase()}${remplacantGrammar.articleRoleRemplacant.slice(1)} est personnellement ${remplacantGrammar.identifie} pour les actes réalisés pendant le remplacement.
 
 ${remplacantGrammar.pronomSujet} utilise sa propre CPS ou e-CPS lorsque ce mode de facturation est retenu.
 
-Lorsque des feuilles de soins papier pré-identifiées au nom de ${remplaceGrammar.articleRoleRemplace} sont utilisées, ${remplacantGrammar.articleRoleRemplacant} doit y faire apparaître visiblement son nom, son prénom, sa qualité de ${remplacantGrammar.roleRemplacant}, ses numéros ordinal et RPPS, ainsi que sa signature.
+Lorsque des feuilles de soins papier pré-identifiées au nom de ${remplaceGrammar.articleRoleRemplace} sont utilisées, ${remplacantGrammar.articleRoleRemplacant} doit y faire apparaître visiblement son nom, son prénom, sa qualité d'${remplacantGrammar.roleRemplacant}, ses numéros ordinal et RPPS, ainsi que sa signature.
 
 La CPS personnelle de ${remplaceGrammar.articleRoleRemplace} ne doit jamais être utilisée directement par ${remplacantGrammar.articleRoleRemplacant}.
 
@@ -631,8 +634,7 @@ ${redevanceAlerte}
 
 ${remplaceGrammar.articleRoleRemplace.charAt(0).toUpperCase()}${remplaceGrammar.articleRoleRemplace.slice(1)} s’engage à fournir à ${remplacantGrammar.articleRoleRemplacant} les documents permettant de vérifier la concordance entre les actes facturés et la rémunération due.
 
-En cas de décision définitive de répétition d’un indu par un organisme d’assurance maladie portant sur des actes effectués par ${remplacantGrammar.articleRoleRemplacant} et qui lui sont imputables, cette dernière ou ce dernier rembourse à ${remplaceGrammar.articleRoleRemplace} les sommes concernées sur présentation des justificatifs correspondants.
-
+En cas de décision définitive de répétition d’un indu par un organisme d’assurance maladie portant sur des actes effectués par ${remplacantGrammar.articleRoleRemplacant} et qui lui sont imputables, ${remplacantGrammar.pronomSujet} rembourse à ${remplaceGrammar.articleRoleRemplace} les sommes concernées sur présentation des justificatifs correspondants.
 ARTICLE 10 - OBLIGATIONS FISCALES ET SOCIALES
 
 Chaque partie procède de manière indépendante à ses déclarations fiscales et sociales et supporte personnellement les charges fiscales et sociales afférentes à son activité dans le cadre du présent remplacement.
