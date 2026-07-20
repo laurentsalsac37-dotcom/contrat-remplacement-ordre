@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Resolver, UseFormRegister, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContractData, contractSchema } from "@/lib/schema";
+import { formatDurationLabel } from "@/lib/contract";
 import { Field } from "./Field";
 import { ContractPreview } from "./ContractPreview";
 import { LegalAudit } from "./LegalAudit";
@@ -445,7 +446,7 @@ export function ContractApp() {
                     <option value="conge_maladie">Congé maladie</option>
                     <option value="conge_maternite">Congé maternité</option>
                     <option value="conge_paternite">Congé paternité</option>
-                    <option value="formation">Formation professionnelle</option>
+                    <option value="formation_professionnelle">Formation professionnelle</option>
                     <option value="mandat_ordinal">Mandat ordinal</option>
                     <option value="mandat_syndical">Mandat syndical</option>
                     <option value="motif_familial">Motif familial</option>
@@ -608,7 +609,7 @@ export function ContractApp() {
               <Field label="Mode de facturation" error={errors.modeFacturation?.message}>
                 <select className={inputClass} {...register("modeFacturation")}>
                   <option value="cps_remplacant">CPS ou e-CPS personnelle du remplaçant</option>
-                  <option value="feuilles_soins">Feuilles de soins papier avec identification du remplaçant</option>
+                  <option value="feuille_soins">Feuilles de soins papier avec identification du remplaçant</option>
                 </select>
               </Field>
 
@@ -708,7 +709,7 @@ export function ContractApp() {
                 <Field
                   label="Préavis accord commun"
                   error={errors.preavisCommunAccord?.message}
-                  hint={preavisCommunAccordValue <= 1 ? "un préavis de 1 jour" : `un préavis de ${preavisCommunAccordValue} jours`}
+                  hint={`un préavis de ${formatDurationLabel(preavisCommunAccordValue)}`}
                 >
                   <input
                     type="number"
@@ -721,7 +722,7 @@ export function ContractApp() {
                 <Field
                   label="Préavis en cas de manquement"
                   error={errors.preavisManquement?.message}
-                  hint={preavisManquementValue <= 1 ? "un préavis de 1 jour" : `un préavis de ${preavisManquementValue} jours`}
+                  hint={`un préavis de ${formatDurationLabel(preavisManquementValue)}`}
                 >
                   <input
                     type="number"

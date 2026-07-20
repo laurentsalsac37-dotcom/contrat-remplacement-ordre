@@ -372,13 +372,13 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
     items.push({
       level: "blocking",
       title: "Nombre minimal de trois exemplaires",
-      message: "Trois exemplaires au minimum sont requis.",
+      message: "Le contrat doit prévoir au moins trois exemplaires originaux.",
     })
   } else {
     items.push({
       level: "ok",
       title: "Nombre minimal de trois exemplaires",
-      message: "Le contrat prévoit bien au moins trois exemplaires.",
+      message: "Le contrat prévoit bien au moins trois exemplaires originaux.",
     })
   }
 

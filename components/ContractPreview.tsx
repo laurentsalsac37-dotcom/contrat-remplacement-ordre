@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ContractData } from "@/lib/schema";
-import { buildContractText } from "@/lib/contract";
+import { buildContractText, modeFacturationLabel, motifLabel, yesNoLabel } from "@/lib/contract";
 
 type Props = {
   data: Partial<ContractData>;
@@ -13,6 +13,8 @@ export function ContractPreview({
   signatureRemplace,
   signatureRemplacant,
 }: Props) {
+  const showAssociesLine = data.exerciceEnGroupe === "oui";
+
   return (
     <div className="contract-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4 no-print">
@@ -58,11 +60,14 @@ export function ContractPreview({
             Synthèse préalable à la signature
           </p>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
-            <li>• Motif : {data.motif ? String(data.motif) : "à compléter"}</li>
+            <li>• Motif : {data.motif ? motifLabel(data) : "à compléter"}</li>
             <li>• Période : {data.dateDebut || "à compléter"} → {data.dateFin || "à compléter"}</li>
-            <li>• Facturation : {data.modeFacturation || "à compléter"}</li>
+            <li>• Facturation : {data.modeFacturation ? modeFacturationLabel(data.modeFacturation) : "à compléter"}</li>
             <li>• Autorisation de remplacement : {data.numeroAutorisation || "à compléter"}</li>
-            <li>• Déclarations patients / associés : {data.patientsInformes ? "patients informés" : "patients à informer"}; {data.associesInformes ? "associés/cocontractants informés" : "associés/cocontractants à informer"}</li>
+            <li>• Patients informés : {yesNoLabel(data.patientsInformes)}</li>
+            {showAssociesLine && (
+              <li>• Associés ou cocontractants informés : {yesNoLabel(data.associesInformes)}</li>
+            )}
           </ul>
         </div>
 
