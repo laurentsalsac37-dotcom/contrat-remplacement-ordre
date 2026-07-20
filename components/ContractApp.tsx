@@ -1944,16 +1944,24 @@ export function ContractApp() {
                     </Field>
                   ) : (
                     <div className="md:col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
-                      Le remplacement n’excédant pas
-                      trois mois, la clause de
-                      non-réinstallation ne
-                      s’applique pas. Le remplaçant
-                      demeure tenu à une obligation
-                      de loyauté et de confraternité.
-                      Il s’interdit tout détournement
-                      de patientèle et tout procédé
-                      de concurrence déloyale.
-                    </div>
+  <p className="font-bold">
+    Clause de loyauté et d’absence de concurrence déloyale
+  </p>
+
+  <p className="mt-2">
+    Le remplacement n’excédant pas trois mois, la clause de
+    non-réinstallation prévue pour les remplacements d’une durée
+    supérieure à trois mois ne s’applique pas.
+  </p>
+
+  <p className="mt-2">
+    Le remplaçant s’engage toutefois à respecter une obligation de
+    loyauté et de confraternité à l’égard du remplacé. Il s’interdit,
+    pendant le remplacement et à son issue, tout détournement de
+    patientèle, toute sollicitation personnelle des patients du
+    remplacé et tout procédé constitutif d’une concurrence déloyale.
+  </p>
+</div>
                   )}
 
                   {showNonReinstallation &&
