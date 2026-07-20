@@ -40,7 +40,7 @@ export function ContractPreview({
           </div>
 
           <Image
-            src="/logo-ordre.png"
+            src="/logo-cidoi-37-41.png"
             alt="Logo de l’Ordre national des infirmiers"
             width={150}
             height={150}
