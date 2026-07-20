@@ -364,8 +364,7 @@ ${remplacantGrammar.articleRoleRemplacant.charAt(0).toUpperCase()}${remplacantGr
       : "le périmètre à compléter par les parties";
 
   const accordNotifie =
-    data.accordOrdreNonConcurrence === "oui" ||
-    data.accordOrdreNonConcurrence === true;
+  data.accordOrdreNonConcurrence === "oui";
 
   const accordText = accordNotifie
     ? "Les parties déclarent qu’un accord dérogatoire a été conclu et notifié au conseil de l’Ordre compétent."
@@ -415,11 +414,10 @@ export function buildContractText(data: Partial<ContractData>) {
     ? " Une copie du justificatif est annexée au présent contrat."
     : "";
 
-  const patientsInformationText =
-    data.patientsInformes === "oui" || data.patientsInformes === true
-      ? "Les parties confirment que les patients seront informés dès que possible de la présence, de l’identité et de la qualité de l’infirmier remplaçant."
-      : "L’information des patients sur la présence, l’identité et la qualité de l’infirmier remplaçant devra être confirmée avant la signature du contrat.";
-
+  const patientsInformationText = data.patientsInformes
+  ? "Les parties confirment que les patients seront informés dès que possible de la présence, de l’identité et de la qualité de l’infirmier remplaçant."
+  : "L’information des patients sur la présence, l’identité et de la qualité de l’infirmier remplaçant devra être confirmée avant la signature du contrat.";
+  
   const groupeText = exerciceEnGroupe
     ? `
 Type d’exercice en groupe :
