@@ -476,7 +476,7 @@ function isStepVisible(step: number) {
               </div>
             </section>
             )}
-            {isStepVisible(1) && (
+            {isStepVisible(2) && (
             <section className="space-y-4 border-t border-slate-200 pt-5 md:pt-6">
               <StepHeader number="2" title="Infirmier remplaçant" />
 
@@ -1028,12 +1028,37 @@ function isStepVisible(step: number) {
             </section>
             )}
 
-            <button
-              type="submit"
-              className="hidden w-full rounded-xl bg-red-700 px-4 py-3 font-semibold text-white hover:bg-red-800 md:block"
-            >
-              Valider le contrat et imprimer en PDF
-            </button>
+            <div className="no-print mt-6 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+  <button
+    type="button"
+    onClick={goToPreviousStep}
+    disabled={currentStep === 1}
+    className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    ← Précédent
+  </button>
+
+  <p className="text-center text-sm text-slate-500">
+    Étape {currentStep} sur {FORM_STEPS.length}
+  </p>
+
+  {currentStep < FORM_STEPS.length ? (
+    <button
+      type="button"
+      onClick={goToNextStep}
+      className="rounded-xl bg-red-700 px-5 py-3 font-semibold text-white hover:bg-red-800"
+    >
+      Suivant →
+    </button>
+  ) : (
+    <button
+      type="submit"
+      className="rounded-xl bg-red-700 px-5 py-3 font-semibold text-white hover:bg-red-800"
+    >
+      Valider le contrat et imprimer en PDF
+    </button>
+  )}
+</div>
 
             {validatedData && (
               <p className="rounded-xl bg-red-50 p-3 text-sm text-red-800">
@@ -1055,15 +1080,36 @@ function isStepVisible(step: number) {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white p-3 shadow-lg md:hidden no-print">
-        <button
-          type="submit"
-          form="contract-form"
-          className="w-full rounded-xl bg-red-700 px-4 py-4 text-base font-semibold text-white"
-        >
-          Valider et générer le PDF
-        </button>
-      </div>
+      <div className="no-print fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white p-3 shadow-lg md:hidden">
+  <div className="grid grid-cols-2 gap-3">
+    <button
+      type="button"
+      onClick={goToPreviousStep}
+      disabled={currentStep === 1}
+      className="rounded-xl border border-slate-300 bg-white px-3 py-4 text-sm font-semibold text-slate-700 disabled:opacity-40"
+    >
+      ← Précédent
+    </button>
+
+    {currentStep < FORM_STEPS.length ? (
+      <button
+        type="button"
+        onClick={goToNextStep}
+        className="rounded-xl bg-red-700 px-3 py-4 text-sm font-semibold text-white"
+      >
+        Suivant →
+      </button>
+    ) : (
+      <button
+        type="submit"
+        form="contract-form"
+        className="rounded-xl bg-red-700 px-3 py-4 text-sm font-semibold text-white"
+      >
+        Générer le PDF
+      </button>
+    )}
+  </div>
+</div>
     </main>
   );
 }
