@@ -85,6 +85,10 @@ export function ContractApp() {
       conventionNationaleInformee: false,
       restitutionLocauxMateriel: false,
       abandonActiviteFinMission: false,
+      deconventionnementRemplace: false,
+      deconventionnementRemplacant: false,
+      conciliationPrealable: false,
+      transmissionInformationsContinuiteSoins: false,
     },
   });
 
@@ -106,12 +110,16 @@ export function ContractApp() {
       <div className="mx-auto w-full max-w-7xl">
         <header className="mb-4 rounded-none bg-white p-4 shadow-sm md:mb-8 md:rounded-2xl md:p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-red-700 md:text-sm">
-            Ordre national des infirmiers
+            Générateur fondé sur le modèle du Conseil national de l’Ordre des infirmiers
           </p>
 
           <h1 className="mt-2 text-2xl font-bold leading-tight text-slate-950 md:text-3xl">
             Générateur de contrat de remplacement infirmier
           </h1>
+
+          <p className="mt-2 text-sm text-slate-600">
+            Outil de rédaction fondé sur le modèle ordinal mis à jour le 15 novembre 2023.
+          </p>
 
           <p className="mt-3 text-sm leading-6 text-slate-700 md:max-w-4xl md:text-base">
             Complétez les informations des deux infirmiers, le motif, la durée,
@@ -207,7 +215,6 @@ export function ContractApp() {
               <Field label="Statut du remplaçant" error={errors.statutRemplacant?.message}>
                 <select className={inputClass} {...register("statutRemplacant")}>
                   <option value="non_installe">Sans résidence professionnelle</option>
-                  <option value="installe">Infirmier libéral installé</option>
                 </select>
               </Field>
 
@@ -419,7 +426,6 @@ export function ContractApp() {
                 <Field label="Lieu de remplacement" error={errors.lieuRemplacement?.message}>
                   <select className={inputClass} {...register("lieuRemplacement")}>
                     <option value="cabinet_remplace">Cabinet du remplacé</option>
-                    <option value="cabinet_remplacant">Cabinet du remplaçant avec accord</option>
                   </select>
                 </Field>
               </div>
@@ -638,6 +644,8 @@ export function ContractApp() {
               <CheckboxLine register={register} name="absenceInterdictionRemplace" error={Boolean(errors.absenceInterdictionRemplace)} label="L’infirmier remplacé atteste ne pas faire l’objet d’une interdiction d’exercice." />
               <CheckboxLine register={register} name="absenceInterdictionRemplacant" error={Boolean(errors.absenceInterdictionRemplacant)} label="L’infirmier remplaçant atteste ne pas faire l’objet d’une interdiction d’exercice." />
               <CheckboxLine register={register} name="absenceLiquidationJudiciaire" error={Boolean(errors.absenceLiquidationJudiciaire)} label="Les parties attestent ne pas faire l’objet d’une liquidation judiciaire incompatible avec l’exercice ou le remplacement." />
+              <CheckboxLine register={register} name="deconventionnementRemplace" error={Boolean(errors.deconventionnementRemplace)} label="L’infirmier remplacé déclare ne faire l’objet d’aucune mesure de déconventionnement faisant obstacle à son remplacement." />
+              <CheckboxLine register={register} name="deconventionnementRemplacant" error={Boolean(errors.deconventionnementRemplacant)} label="L’infirmier remplaçant déclare ne faire l’objet d’aucune mesure de déconventionnement faisant obstacle au remplacement." />
               <CheckboxLine register={register} name="remplacantUtiliseSaCps" error={Boolean(errors.remplacantUtiliseSaCps)} label="L’infirmier remplaçant confirme utiliser sa propre CPS ou e-CPS lorsque ce mode est retenu." />
               <CheckboxLine register={register} name="jamaisCpsDuRemplace" error={Boolean(errors.jamaisCpsDuRemplace)} label="Les parties confirment que la CPS personnelle du remplacé ne sera jamais utilisée directement par le remplaçant." />
               <CheckboxLine register={register} name="remplacantIdentifiePersonnellement" error={Boolean(errors.remplacantIdentifiePersonnellement)} label="Le remplaçant sera personnellement identifié pour les actes réalisés pendant le remplacement." />
@@ -649,7 +657,9 @@ export function ContractApp() {
               <CheckboxLine register={register} name="conventionNationaleInformee" error={Boolean(errors.conventionNationaleInformee)} label="Le remplacé s’engage à informer le remplaçant des dispositions utiles de la Convention nationale." />
               <CheckboxLine register={register} name="restitutionLocauxMateriel" error={Boolean(errors.restitutionLocauxMateriel)} label="Le remplaçant s’engage à restituer les locaux et le matériel dans l’état initial, sous réserve de l’usage normal." />
               <CheckboxLine register={register} name="abandonActiviteFinMission" error={Boolean(errors.abandonActiviteFinMission)} label="Le remplaçant s’engage à abandonner ses activités de remplacement auprès de la patientèle du remplacé à la fin de la mission." />
-              <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent." />
+              <CheckboxLine register={register} name="transmissionInformationsContinuiteSoins" error={Boolean(errors.transmissionInformationsContinuiteSoins)} label="Le remplaçant s’engage, à la fin de la mission, à cesser ses activités de remplacement auprès des patients du remplacé et à transmettre les informations nécessaires à la continuité des soins." />
+              <CheckboxLine register={register} name="conciliationPrealable" error={Boolean(errors.conciliationPrealable)} label="Les parties s’engagent à recourir à une tentative préalable de conciliation en cas de différend relatif au présent contrat." />
+              <CheckboxLine register={register} name="transmissionOrdre" error={Boolean(errors.transmissionOrdre)} label="Les parties s’engagent à transmettre le contrat au Conseil de l’Ordre compétent dans le délai d’un mois suivant la signature." />
               <CheckboxLine register={register} name="aucuneContreLettre" error={Boolean(errors.aucuneContreLettre)} label="Les parties déclarent qu’aucune contre-lettre ne modifie le présent contrat." />
             </section>
 

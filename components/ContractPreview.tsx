@@ -35,7 +35,7 @@ export function ContractPreview({
               remplaçant
             </h1>
             <p className="mt-3 text-sm text-slate-600">
-              Modèle à compléter avant signature par les deux parties.
+              Contrat établi à partir des informations déclarées par les parties.
             </p>
           </div>
 

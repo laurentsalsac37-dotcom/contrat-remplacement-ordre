@@ -43,7 +43,6 @@ function typeRemplacementLabel(type?: string) {
 
 function statutRemplacantLabel(statut?: string) {
   const labels: Record<string, string> = {
-    installe: "infirmier libéral installé",
     non_installe: "infirmier sans résidence professionnelle titulaire d’une autorisation de remplacement",
   };
 
@@ -53,7 +52,6 @@ function statutRemplacantLabel(statut?: string) {
 function lieuRemplacementLabel(lieu?: string) {
   const labels: Record<string, string> = {
     cabinet_remplace: "cabinet de l’infirmier remplacé",
-    cabinet_remplacant: "cabinet de l’infirmier remplaçant avec accord de l’infirmier remplacé",
   };
 
   return labels[lieu || ""] || value(lieu);
@@ -90,6 +88,16 @@ export function buildContractText(data: Partial<ContractData>) {
     data.redevancePrevue === "oui" && Number(data.tauxRedevance || 0) > 10
       ? "\nAlerte contractuelle : le taux de redevance dépasse l’usage généralement observé de 5 à 10 %. Les parties déclarent avoir vérifié que ce taux correspond aux frais réels de fonctionnement du cabinet."
       : "";
+
+  const redevanceText =
+    data.redevancePrevue === "oui"
+      ? `Le taux de redevance est fixé à ${value(data.tauxRedevance)} % et la somme du pourcentage reversé au remplaçant et de la redevance est égale à 100 %.`
+      : "En l’absence de redevance, le remplaçant reçoit 100 % des honoraires.";
+
+  const indemnitesKilometriquesText =
+    data.fraisKilometriquesExclus === "oui"
+      ? "Les indemnités kilométriques sont reversées intégralement au remplaçant et sont exclues de l’assiette de la redevance."
+      : "Les parties conviennent expressément d’inclure les indemnités kilométriques dans l’assiette de la redevance.";
 
   return `
 CONTRAT DE REMPLACEMENT ENTRE UN INFIRMIER LIBÉRAL ET UN INFIRMIER REMPLAÇANT
@@ -149,11 +157,17 @@ Les parties déclarent ne pas faire l’objet d’une interdiction d’exercice 
 
 Les parties déclarent ne pas faire l’objet d’une mesure de liquidation judiciaire incompatible avec l’exercice ou le remplacement.
 
+L’infirmier remplacé déclare ne faire l’objet d’aucune mesure de déconventionnement faisant obstacle à son remplacement.
+
+L’infirmier remplaçant déclare ne faire l’objet d’aucune mesure de déconventionnement faisant obstacle au remplacement.
+
 L’infirmier remplaçant atteste ne pas assurer plus de deux remplacements simultanément.
 
 L’infirmier remplaçant atteste disposer d’une assurance responsabilité civile professionnelle valide pour toute la durée du remplacement. L’attestation est annexée au présent contrat.
 
 Les parties déclarent avoir informé les caisses primaires d’assurance maladie concernées du nom du remplaçant, de la durée, des dates du remplacement et des modalités de facturation retenues.
+
+L’autorisation de remplacement doit rester valide pendant toute la durée du remplacement.
 
 ARTICLE 4 - EXERCICE EN GROUPE, INFORMATION ET AGRÉMENT
 
@@ -181,7 +195,7 @@ ${value(data.adresseExercice)}
 Modalité de lieu retenue :
 ${lieuRemplacementLabel(data.lieuRemplacement)}
 
-Lorsque le remplaçant est sans résidence professionnelle, le remplacement est réalisé au lieu d’exercice professionnel de l’infirmier remplacé. Lorsque le remplaçant est déjà installé, il reçoit les patients dans son propre cabinet uniquement avec l’accord de l’infirmier remplacé.
+Lorsque le remplaçant est sans résidence professionnelle, le remplacement est réalisé au lieu d’exercice professionnel de l’infirmier remplacé.
 
 L’infirmier remplacé met à disposition du remplaçant les locaux, installations, équipements et matériels nécessaires à la continuité des soins.
 
@@ -262,11 +276,23 @@ ${assietteRedevance(data)}
 
 Frais kilométriques exclus de l’assiette de la redevance :
 ${yesNo(data.fraisKilometriquesExclus)}
+${redevanceText}
+${indemnitesKilometriquesText}
 ${redevanceAlerte}
 
 L’infirmier remplacé s’engage à fournir au remplaçant les documents permettant de vérifier la concordance entre les actes facturés et la rémunération due.
 
-ARTICLE 10 - OBLIGATIONS DE L’INFIRMIER REMPLACÉ
+En cas de décision définitive de répétition d’un indu par un organisme d’assurance maladie portant sur des actes effectués par le remplaçant et qui lui sont imputables, le remplaçant rembourse au remplacé les sommes concernées sur présentation des justificatifs correspondants.
+
+ARTICLE 10 - OBLIGATIONS FISCALES ET SOCIALES
+
+Chaque partie procède de manière indépendante à ses déclarations fiscales et sociales et supporte personnellement les charges fiscales et sociales afférentes à son activité dans le cadre du présent remplacement.
+
+ARTICLE 11 - CARACTÈRE PERSONNEL ET INCESSIBILITÉ
+
+Le présent contrat est conclu en considération de la personne de chacun des cocontractants. Il ne peut être cédé, transféré ou confié à un tiers.
+
+ARTICLE 12 - OBLIGATIONS DE L’INFIRMIER REMPLACÉ
 
 L’infirmier remplacé s’engage à suspendre son activité professionnelle pendant les périodes de remplacement.
 
@@ -278,23 +304,36 @@ Il s’engage à informer les organismes d’assurance maladie dans les conditio
 
 Il s’engage à fournir les documents nécessaires à la vérification des actes facturés, des honoraires encaissés et des sommes dues au remplaçant.
 
-ARTICLE 11 - RÉSILIATION
+ARTICLE 13 - RÉSILIATION
 
 Le présent contrat prendra fin automatiquement au terme fixé à l’article 2.
 
 Il sera résilié d’un commun accord entre les parties, sous réserve d’un préavis de ${value(data.preavisCommunAccord)} jour(s).
 
-En cas de manquement par l’une des parties à ses obligations contractuelles, l’autre partie notifiera la résiliation par écrit, avec un préavis de ${value(data.preavisManquement)} jour(s), sauf situation justifiant une cessation immédiate.
+En cas de manquement par l’une des parties à ses obligations contractuelles ou déontologiques, l’autre partie lui adresse une notification écrite par lettre recommandée avec accusé de réception.
 
-Le contrat prendra fin en cas de retrait de l’autorisation de remplacement, d’interdiction d’exercice, d’indisponibilité devenue définitive ou de tout événement rendant impossible la poursuite du remplacement.
+Cette notification précise la nature du manquement constaté, les mesures attendues afin d’y remédier et le délai de préavis de ${value(data.preavisManquement)} jours.
 
-ARTICLE 12 - RENOUVELLEMENT
+Si la partie destinataire remédie au manquement selon les modalités et dans le délai indiqués dans la notification, la résiliation ne prend pas effet.
+
+À défaut de régularisation dans ce délai, la résiliation prend effet au terme du préavis indiqué.
+
+Le contrat est résilié de plein droit, sans préavis :
+
+- en cas de retrait ou d’expiration de l’autorisation de remplacement
+- en cas de sanction disciplinaire comportant une interdiction d’exercice égale ou supérieure à trois mois prononcée à l’encontre de l’une des parties
+- lorsque l’indisponibilité temporaire de l’infirmier remplacé devient définitive
+- lorsqu’un événement rend juridiquement impossible la poursuite du remplacement
+
+Au terme du présent contrat, l’infirmier remplaçant cesse l’ensemble de ses activités de remplacement auprès des patients de l’infirmier remplacé et lui transmet, dans le respect du secret professionnel, l’ensemble des informations nécessaires à la continuité des soins.
+
+ARTICLE 14 - RENOUVELLEMENT
 
 Toute prolongation du remplacement nécessitera un avenant écrit, daté et signé par les deux parties.
 
 Cet avenant précisera la nouvelle période concernée, le motif de prolongation et les adaptations nécessaires aux modalités d’organisation du remplacement.
 
-ARTICLE 13 - LOYAUTÉ, ABSENCE DE CONCURRENCE DÉLOYALE ET NON-CONCURRENCE
+ARTICLE 15 - LOYAUTÉ, ABSENCE DE CONCURRENCE DÉLOYALE ET NON-CONCURRENCE
 
 ${
   nonConcurrenceApplicable
@@ -323,25 +362,33 @@ Lorsque le remplaçant dispose déjà d’une installation professionnelle, les 
 
 À l’issue de sa mission, le remplaçant abandonne l’ensemble de ses activités de remplacement auprès de la patientèle de l’infirmier remplacé.
 
-ARTICLE 14 - ABSENCE DE CONTRE-LETTRE
+ARTICLE 16 - RÈGLEMENT DES DIFFÉRENDS
 
-Les parties déclarent qu’aucune contre-lettre ne modifie les stipulations du présent contrat.
+En cas de difficulté relative à la validité, à l’interprétation, à l’exécution, à la résiliation ou à la résolution du présent contrat, les parties s’engagent, préalablement à toute action contentieuse, à soumettre leur différend à une tentative de conciliation.
 
-ARTICLE 15 - TRANSMISSION AU CONSEIL DE L’ORDRE
+Cette conciliation sera confiée, au besoin, au conseil départemental ou interdépartemental de l’Ordre des infirmiers compétent, conformément à l’article R. 4312-25 du Code de la santé publique.
 
-Les parties s’engagent à transmettre le présent contrat au Conseil de l’Ordre compétent dans le délai applicable à compter de sa signature.
+ARTICLE 17 - ABSENCE DE CONTRE-LETTRE
 
-ARTICLE 16 - RAPPEL DES ARTICLES R. 4312-83 À R. 4312-87 DU CODE DE LA SANTÉ PUBLIQUE
+Les parties déclarent qu’aucune contre-lettre ni aucun accord distinct ne modifie les stipulations du présent contrat. Tout avenant devra être établi par écrit, daté et signé par les deux parties, puis transmis au conseil de l’Ordre compétent.
+
+ARTICLE 18 - TRANSMISSION AU CONSEIL DE L’ORDRE
+
+Chacune des parties communique le présent contrat au conseil départemental ou interdépartemental de l’Ordre des infirmiers dont elle relève dans un délai d’un mois à compter de sa signature. Les avenants et tout document modifiant le contrat sont transmis dans les mêmes conditions.
+
+ARTICLE 19 - RAPPEL DES ARTICLES R. 4312-83 À R. 4312-87 DU CODE DE LA SANTÉ PUBLIQUE
 
 Les parties déclarent avoir pris connaissance des principales dispositions réglementaires relatives au remplacement infirmier, notamment les articles R. 4312-83 à R. 4312-87 du Code de la santé publique.
 
 Elles rappellent en particulier que le remplacement est temporaire, que le remplaçant ne remplace pas plus de deux infirmiers simultanément, que le remplacé s’abstient de toute activité infirmière pendant la période de remplacement, que la durée du remplacement correspond à l’indisponibilité, et qu’un contrat écrit est établi au-delà de vingt-quatre heures ou en cas de remplacement répété.
 
-ARTICLE 17 - SIGNATURES
+ARTICLE 20 - SIGNATURES
 
 Fait à ${value(data.faitA)}, le ${value(data.faitLe)}.
 
-Nombre d’exemplaires : ${value(data.nombreExemplaires)}.
+Trois exemplaires au minimum sont requis.
+
+Le présent contrat est établi en ${value(data.nombreExemplaires)} exemplaires, au minimum trois.
 
 Les signatures des parties figurent ci-après.
 

@@ -87,7 +87,7 @@ export const contractSchema = z
 
     faitA: z.string().min(1, "Lieu de signature obligatoire"),
     faitLe: z.string().min(1, "Date de signature obligatoire"),
-    nombreExemplaires: z.coerce.number().min(2).max(5),
+    nombreExemplaires: z.coerce.number().min(3).max(5),
 
     remplaceSuspendActivite: z.boolean(),
     remplacantUtiliseSaCps: z.boolean(),
@@ -106,6 +106,10 @@ export const contractSchema = z
     conventionNationaleInformee: z.boolean(),
     restitutionLocauxMateriel: z.boolean(),
     abandonActiviteFinMission: z.boolean(),
+    deconventionnementRemplace: z.boolean(),
+    deconventionnementRemplacant: z.boolean(),
+    conciliationPrealable: z.boolean(),
+    transmissionInformationsContinuiteSoins: z.boolean(),
   })
   .refine((data) => data.motif !== "autre" || Boolean(data.motifAutre), {
     path: ["motifAutre"],
@@ -172,6 +176,19 @@ export const contractSchema = z
     {
       path: ["tauxRedevance"],
       message: "Le taux de redevance doit être renseigné.",
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.redevancePrevue === "oui") {
+        return Number(data.tauxRedevance) === 100 - Number(data.pourcentageReverse || 0);
+      }
+
+      return Number(data.tauxRedevance) === 0;
+    },
+    {
+      path: ["tauxRedevance"],
+      message: "Le taux de redevance doit correspondre à 100 % moins le pourcentage reversé au remplaçant.",
     }
   )
   .refine((data) => data.remplaceSuspendActivite, {
@@ -243,6 +260,22 @@ export const contractSchema = z
   })
   .refine((data) => data.abandonActiviteFinMission, {
     path: ["abandonActiviteFinMission"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine((data) => data.deconventionnementRemplace, {
+    path: ["deconventionnementRemplace"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine((data) => data.deconventionnementRemplacant, {
+    path: ["deconventionnementRemplacant"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine((data) => data.conciliationPrealable, {
+    path: ["conciliationPrealable"],
+    message: "Confirmation obligatoire.",
+  })
+  .refine((data) => data.transmissionInformationsContinuiteSoins, {
+    path: ["transmissionInformationsContinuiteSoins"],
     message: "Confirmation obligatoire.",
   });
 

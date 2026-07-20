@@ -8,6 +8,22 @@ function value(input: unknown) {
   return String(input)
 }
 
+function motifLabel(value?: string) {
+  const labels: Record<string, string> = {
+    conge_annuel: "Congé annuel",
+    conge_personnel: "Congé personnel",
+    conge_maladie: "Congé maladie",
+    conge_maternite: "Congé maternité",
+    conge_paternite: "Congé paternité",
+    formation: "Formation professionnelle",
+    mandat_ordinal: "Mandat ordinal",
+    mandat_syndical: "Mandat syndical",
+    motif_familial: "Motif familial",
+  }
+
+  return labels[value || ""] || value || "..."
+}
+
 export function buildTransmissionMail(data: Partial<ContractData>) {
   const remplace = `${value(data.remplaceCivilite)} ${value(data.remplacePrenom)} ${value(data.remplaceNom)}`
   const remplacant = `${value(data.remplacantCivilite)} ${value(data.remplacantPrenom)} ${value(data.remplacantNom)}`
@@ -26,7 +42,9 @@ ${remplacant}, infirmier remplaçant, inscrit au tableau de l’Ordre sous le nu
 
 Le remplacement est prévu du ${value(data.dateDebut)} au ${value(data.dateFin)}.
 
-Motif du remplacement : ${value(data.motif)}.
+Motif du remplacement : ${motifLabel(data.motif)}.
+
+Le présent contrat vous est transmis dans le délai d’un mois suivant sa signature.
 
 Le contrat est transmis conformément aux obligations applicables aux contrats ayant pour objet l’exercice de la profession infirmière.
 

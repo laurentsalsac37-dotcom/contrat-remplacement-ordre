@@ -46,6 +46,21 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
     })
   }
 
+  if (!data.conciliationPrealable) {
+    items.push({
+      level: "blocking",
+      title: "Conciliation préalable",
+      message:
+        "Les parties doivent s’engager à recourir à une tentative préalable de conciliation en cas de différend.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Conciliation préalable",
+      message: "La clause de conciliation préalable est renseignée.",
+    })
+  }
+
   if (data.statutRemplacant === "non_installe") {
     if (
       isEmpty(data.numeroAutorisation) ||
@@ -75,6 +90,21 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
           "Le justificatif d’activité du remplaçant non installé devrait être renseigné ou annexé.",
       })
     }
+  }
+
+  if (!data.deconventionnementRemplace || !data.deconventionnementRemplacant) {
+    items.push({
+      level: "blocking",
+      title: "Absence de mesure de déconventionnement",
+      message:
+        "Les deux parties doivent déclarer ne faire l’objet d’aucune mesure de déconventionnement faisant obstacle au remplacement.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Absence de mesure de déconventionnement",
+      message: "Les deux parties attestent ne faire l’objet d’aucune mesure de déconventionnement.",
+    })
   }
 
   if (!data.rcpValide) {
@@ -199,6 +229,29 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
     }
   }
 
+  if (data.redevancePrevue === "oui") {
+    if (Number(data.tauxRedevance || 0) !== 100 - Number(data.pourcentageReverse || 0)) {
+      items.push({
+        level: "blocking",
+        title: "Cohérence rétrocession et redevance",
+        message:
+          "La répartition entre la rétrocession au remplaçant et la redevance doit être cohérente et totaliser 100 %.",
+      })
+    } else {
+      items.push({
+        level: "ok",
+        title: "Cohérence rétrocession et redevance",
+        message: "La redevance et la rétrocession sont cohérentes et totalisent 100 %.",
+      })
+    }
+  } else {
+    items.push({
+      level: "ok",
+      title: "Cohérence rétrocession et redevance",
+      message: "Aucune redevance n’est prévue, le remplaçant reçoit l’intégralité des honoraires.",
+    })
+  }
+
   if (!data.justificatifsRemuneration) {
     items.push({
       level: "blocking",
@@ -251,7 +304,28 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
       level: "blocking",
       title: "Transmission au Conseil de l’Ordre",
       message:
-        "Les parties doivent s’engager à transmettre le contrat au Conseil de l’Ordre compétent.",
+        "Les parties doivent s’engager à transmettre le contrat au Conseil de l’Ordre compétent dans un délai d’un mois à compter de la signature.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Délai d’un mois pour la transmission ordinale",
+      message: "Le contrat est prévu pour être transmis dans le délai d’un mois suivant la signature.",
+    })
+  }
+
+  if (!data.transmissionInformationsContinuiteSoins) {
+    items.push({
+      level: "blocking",
+      title: "Transmission des informations nécessaires à la continuité des soins",
+      message:
+        "Le remplaçant doit s’engager à transmettre les informations nécessaires à la continuité des soins à la fin du remplacement.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Transmission des informations nécessaires à la continuité des soins",
+      message: "La transmission des informations de continuité des soins est prévue.",
     })
   }
 
@@ -263,6 +337,49 @@ export function buildLegalAudit(data: Partial<ContractData>): AuditItem[] {
         "Les parties doivent déclarer qu’aucune contre-lettre ne modifie le contrat.",
     })
   }
+
+  if (Number(data.nombreExemplaires || 0) < 3) {
+    items.push({
+      level: "blocking",
+      title: "Nombre minimal de trois exemplaires",
+      message: "Trois exemplaires au minimum sont requis.",
+    })
+  } else {
+    items.push({
+      level: "ok",
+      title: "Nombre minimal de trois exemplaires",
+      message: "Le contrat prévoit bien au moins trois exemplaires.",
+    })
+  }
+
+  if (data.statutRemplacant === "non_installe") {
+    if (isEmpty(data.dateAutorisation) || isEmpty(data.dateFin) || !data.autorisationValide) {
+      items.push({
+        level: "blocking",
+        title: "Validité de l’autorisation pendant toute la période du remplacement",
+        message:
+          "L’autorisation de remplacement doit rester valide pendant toute la période du remplacement.",
+      })
+    } else {
+      items.push({
+        level: "ok",
+        title: "Validité de l’autorisation pendant toute la période du remplacement",
+        message: "L’autorisation de remplacement est censée rester valide pendant toute la période du remplacement.",
+      })
+    }
+  }
+
+  items.push({
+    level: "ok",
+    title: "Obligations fiscales et sociales",
+    message: "Le contrat intègre les obligations fiscales et sociales applicables aux parties.",
+  })
+
+  items.push({
+    level: "ok",
+    title: "Caractère personnel et incessibilité",
+    message: "Le contrat comporte la clause de caractère personnel et d’incessibilité.",
+  })
 
   return items
 }
